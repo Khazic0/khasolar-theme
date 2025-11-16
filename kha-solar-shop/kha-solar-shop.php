@@ -329,6 +329,16 @@ function kha_solar_enqueue_public_assets() {
 			),
 		)
 	);
+
+	// Localize cart handler.
+	wp_localize_script(
+		'kha-solar-cart-handler',
+		'khaCartConfig',
+		array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'kha_solar_nonce' ),
+		)
+	);
 }
 add_action( 'wp_enqueue_scripts', 'kha_solar_enqueue_public_assets' );
 
@@ -532,3 +542,27 @@ function kha_solar_archive_template( $template ) {
 	return $template;
 }
 add_filter( 'template_include', 'kha_solar_archive_template', 99 );
+
+/**
+ * Display mini cart.
+ *
+ * Template function for theme integration.
+ *
+ * @since 1.0.0
+ */
+function kha_mini_cart() {
+	kha_solar_get_template( 'partials/mini-cart.php' );
+}
+
+/**
+ * Get cart count.
+ *
+ * Helper function to get current cart item count.
+ *
+ * @since 1.0.0
+ * @return int Cart count.
+ */
+function kha_get_cart_count() {
+	$cart = new KhaSolar\Cart();
+	return $cart->get_cart_count();
+}

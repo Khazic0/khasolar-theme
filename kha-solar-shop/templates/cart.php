@@ -1,106 +1,223 @@
 <?php
 /**
- * Cart Template
+ * Shopping Cart Template
  *
  * @package KhaSolar
  * @since   1.0.0
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 $cart = new KhaSolar\Cart();
-$cart_items = $cart->get_cart_items();
+$cart_items = $cart->get_cart_contents();
+$cart_subtotal = $cart->get_cart_subtotal();
+$shipping_fee = $cart->get_shipping_fee();
 $cart_total = $cart->get_cart_total();
+$cart_count = $cart->get_cart_count();
+$remaining_for_free_shipping = $cart->get_remaining_for_free_shipping();
+
+get_header();
 ?>
 
-<div class="kha-cart-wrapper">
-	<h1 style="text-align: center; margin-bottom: 40px;"><?php esc_html_e( 'Shopping Cart', 'kha-solar' ); ?></h1>
+<div class="kha-cart-page">
+	<div class="container">
 
-	<?php if ( ! empty( $cart_items ) ) : ?>
+		<?php if ( ! empty( $cart_items ) ) : ?>
 
-		<div class="kha-cart-table">
-			<table>
-				<thead>
-					<tr>
-						<th><?php esc_html_e( 'Product', 'kha-solar' ); ?></th>
-						<th><?php esc_html_e( 'Price', 'kha-solar' ); ?></th>
-						<th><?php esc_html_e( 'Quantity', 'kha-solar' ); ?></th>
-						<th><?php esc_html_e( 'Subtotal', 'kha-solar' ); ?></th>
-						<th><?php esc_html_e( 'Remove', 'kha-solar' ); ?></th>
-					</tr>
-				</thead>
-				<tbody>
-					<?php foreach ( $cart_items as $item ) : ?>
+			<!-- Cart Header -->
+			<div class="kha-cart-header">
+				<h1><?php esc_html_e( 'Giỏ Hàng Của Bạn', 'kha-solar' ); ?> (<?php echo esc_html( $cart_count ); ?> <?php esc_html_e( 'sản phẩm', 'kha-solar' ); ?>)</h1>
+			</div>
+
+			<!-- Free Shipping Progress -->
+			<?php if ( $remaining_for_free_shipping > 0 ) : ?>
+				<div class="kha-shipping-notice">
+					<span class="dashicons dashicons-info"></span>
+					<?php
+					printf(
+						/* translators: %s: remaining amount for free shipping */
+						esc_html__( 'Mua thêm %s để được miễn phí vận chuyển!', 'kha-solar' ),
+						'<strong>' . kha_solar_format_price( $remaining_for_free_shipping ) . '</strong>'
+					);
+					?>
+					<div class="kha-shipping-progress">
 						<?php
-						$product = get_post( $item->product_id );
-						if ( ! $product ) {
-							continue;
-						}
-
-						$price    = get_post_meta( $item->product_id, '_kha_product_price', true );
-						$subtotal = floatval( $price ) * $item->quantity;
+						$progress = ( $cart_subtotal / $cart->get_free_shipping_threshold() ) * 100;
+						$progress = min( $progress, 100 );
 						?>
-						<tr>
-							<td>
-								<div style="display: flex; align-items: center; gap: 15px;">
-									<?php if ( has_post_thumbnail( $item->product_id ) ) : ?>
-										<?php echo get_the_post_thumbnail( $item->product_id, 'kha-product-thumbnail', array( 'class' => 'kha-cart-item-image' ) ); ?>
-									<?php endif; ?>
-									<a href="<?php echo esc_url( get_permalink( $item->product_id ) ); ?>" class="kha-cart-item-name">
-										<?php echo esc_html( get_the_title( $item->product_id ) ); ?>
-									</a>
+						<div class="kha-progress-bar" style="width: <?php echo esc_attr( $progress ); ?>%"></div>
+					</div>
+				</div>
+			<?php else : ?>
+				<div class="kha-shipping-notice kha-free-shipping">
+					<span class="dashicons dashicons-yes-alt"></span>
+					<?php esc_html_e( 'Bạn đã đủ điều kiện để được miễn phí vận chuyển!', 'kha-solar' ); ?>
+				</div>
+			<?php endif; ?>
+
+			<div class="kha-cart-layout">
+
+				<!-- Cart Items -->
+				<div class="kha-cart-items-wrapper">
+					<?php foreach ( $cart_items as $cart_key => $item ) : ?>
+						<div class="kha-cart-item" data-product-id="<?php echo esc_attr( $item['product_id'] ); ?>">
+
+							<!-- Product Image -->
+							<div class="kha-cart-item-image">
+								<?php if ( $item['thumbnail'] ) : ?>
+									<img src="<?php echo esc_url( $item['thumbnail'] ); ?>" alt="<?php echo esc_attr( $item['title'] ); ?>">
+								<?php else : ?>
+									<div class="kha-no-image"><span class="dashicons dashicons-camera"></span></div>
+								<?php endif; ?>
+							</div>
+
+							<!-- Product Info -->
+							<div class="kha-cart-item-info">
+								<h3 class="kha-cart-item-title">
+									<a href="<?php echo esc_url( $item['permalink'] ); ?>"><?php echo esc_html( $item['title'] ); ?></a>
+								</h3>
+
+								<?php if ( $item['is_bundle'] ) : ?>
+									<span class="kha-bundle-badge"><?php esc_html_e( 'Combo', 'kha-solar' ); ?></span>
+								<?php endif; ?>
+
+								<div class="kha-cart-item-price">
+									<span class="kha-price-label"><?php esc_html_e( 'Đơn giá:', 'kha-solar' ); ?></span>
+									<span class="kha-price-value"><?php echo kha_solar_format_price( $item['price'] ); ?></span>
 								</div>
-							</td>
-							<td><?php echo kha_solar_format_price( $price ); ?></td>
-							<td>
-								<div class="kha-cart-quantity">
-									<button type="button" class="kha-qty-btn kha-qty-decrease">−</button>
-									<input type="number" class="kha-qty-input" value="<?php echo esc_attr( $item->quantity ); ?>" min="1" data-cart-item-id="<?php echo esc_attr( $item->id ); ?>">
-									<button type="button" class="kha-qty-btn kha-qty-increase">+</button>
-								</div>
-							</td>
-							<td><strong><?php echo kha_solar_format_price( $subtotal ); ?></strong></td>
-							<td>
-								<button type="button" class="kha-cart-remove" data-cart-item-id="<?php echo esc_attr( $item->id ); ?>">
-									<?php esc_html_e( 'Remove', 'kha-solar' ); ?>
+
+								<!-- Stock Status -->
+								<?php if ( 'outofstock' === $item['stock_status'] ) : ?>
+									<div class="kha-stock-warning">
+										<span class="dashicons dashicons-warning"></span>
+										<?php esc_html_e( 'Sản phẩm đã hết hàng', 'kha-solar' ); ?>
+									</div>
+								<?php elseif ( 'onbackorder' === $item['stock_status'] ) : ?>
+									<div class="kha-stock-info">
+										<span class="dashicons dashicons-info"></span>
+										<?php esc_html_e( 'Đặt trước (giao sau)', 'kha-solar' ); ?>
+									</div>
+								<?php endif; ?>
+							</div>
+
+							<!-- Quantity Controls -->
+							<div class="kha-cart-item-quantity">
+								<button class="kha-qty-btn kha-qty-decrease" data-product-id="<?php echo esc_attr( $item['product_id'] ); ?>">
+									<span class="dashicons dashicons-minus"></span>
 								</button>
-							</td>
-						</tr>
+								<input
+									type="number"
+									class="kha-qty-input"
+									value="<?php echo esc_attr( $item['quantity'] ); ?>"
+									min="1"
+									data-product-id="<?php echo esc_attr( $item['product_id'] ); ?>"
+								>
+								<button class="kha-qty-btn kha-qty-increase" data-product-id="<?php echo esc_attr( $item['product_id'] ); ?>">
+									<span class="dashicons dashicons-plus"></span>
+								</button>
+							</div>
+
+							<!-- Subtotal -->
+							<div class="kha-cart-item-subtotal">
+								<span class="kha-subtotal-label"><?php esc_html_e( 'Tạm tính:', 'kha-solar' ); ?></span>
+								<span class="kha-subtotal-value" data-product-id="<?php echo esc_attr( $item['product_id'] ); ?>">
+									<?php echo kha_solar_format_price( $item['subtotal'] ); ?>
+								</span>
+							</div>
+
+							<!-- Remove Button -->
+							<button class="kha-cart-item-remove" data-product-id="<?php echo esc_attr( $item['product_id'] ); ?>" title="<?php esc_attr_e( 'Xóa sản phẩm', 'kha-solar' ); ?>">
+								<span class="dashicons dashicons-trash"></span>
+							</button>
+
+						</div>
 					<?php endforeach; ?>
-				</tbody>
-			</table>
-		</div>
+				</div>
 
-		<div class="kha-cart-summary">
-			<h3><?php esc_html_e( 'Cart Summary', 'kha-solar' ); ?></h3>
+				<!-- Cart Summary -->
+				<div class="kha-cart-summary">
+					<h3><?php esc_html_e( 'Tổng Đơn Hàng', 'kha-solar' ); ?></h3>
 
-			<div class="kha-summary-row">
-				<span><?php esc_html_e( 'Subtotal:', 'kha-solar' ); ?></span>
-				<span><?php echo kha_solar_format_price( $cart_total ); ?></span>
+					<div class="kha-summary-row">
+						<span><?php esc_html_e( 'Tạm tính:', 'kha-solar' ); ?></span>
+						<span id="kha-cart-subtotal"><?php echo kha_solar_format_price( $cart_subtotal ); ?></span>
+					</div>
+
+					<div class="kha-summary-row">
+						<span><?php esc_html_e( 'Phí vận chuyển:', 'kha-solar' ); ?></span>
+						<span id="kha-cart-shipping">
+							<?php if ( $shipping_fee > 0 ) : ?>
+								<?php echo kha_solar_format_price( $shipping_fee ); ?>
+							<?php else : ?>
+								<span class="kha-text-success"><?php esc_html_e( 'Miễn phí', 'kha-solar' ); ?></span>
+							<?php endif; ?>
+						</span>
+					</div>
+
+					<?php if ( $shipping_fee === 0 && $cart_subtotal >= $cart->get_free_shipping_threshold() ) : ?>
+						<div class="kha-summary-note">
+							<span class="dashicons dashicons-info"></span>
+							<?php esc_html_e( 'Đơn hàng > 5.000.000₫', 'kha-solar' ); ?>
+						</div>
+					<?php endif; ?>
+
+					<div class="kha-summary-divider"></div>
+
+					<div class="kha-summary-row kha-summary-total">
+						<span><?php esc_html_e( 'Tổng cộng:', 'kha-solar' ); ?></span>
+						<span id="kha-cart-total" class="kha-total-amount"><?php echo kha_solar_format_price( $cart_total ); ?></span>
+					</div>
+
+					<!-- Action Buttons -->
+					<div class="kha-cart-actions">
+						<a href="#" class="kha-btn kha-btn-primary kha-btn-checkout">
+							<?php esc_html_e( 'Thanh toán', 'kha-solar' ); ?>
+							<span class="dashicons dashicons-arrow-right-alt2"></span>
+						</a>
+						<a href="<?php echo esc_url( get_post_type_archive_link( 'kha_product' ) ); ?>" class="kha-btn kha-btn-secondary">
+							<span class="dashicons dashicons-arrow-left-alt2"></span>
+							<?php esc_html_e( 'Tiếp tục mua', 'kha-solar' ); ?>
+						</a>
+					</div>
+
+					<!-- Estimated Delivery -->
+					<div class="kha-delivery-info">
+						<span class="dashicons dashicons-clock"></span>
+						<?php
+						printf(
+							/* translators: delivery estimate */
+							esc_html__( 'Dự kiến giao hàng: %s', 'kha-solar' ),
+							'<strong>' . esc_html( date_i18n( 'j/n/Y', strtotime( '+7 days' ) ) ) . '</strong>'
+						);
+						?>
+					</div>
+				</div>
+
 			</div>
 
-			<div class="kha-summary-row total">
-				<span><?php esc_html_e( 'Total:', 'kha-solar' ); ?></span>
-				<span><?php echo kha_solar_format_price( $cart_total ); ?></span>
+		<?php else : ?>
+
+			<!-- Empty Cart -->
+			<div class="kha-cart-empty">
+				<div class="kha-empty-icon">🛒</div>
+				<h2><?php esc_html_e( 'Giỏ hàng trống', 'kha-solar' ); ?></h2>
+				<p><?php esc_html_e( 'Hãy khám phá các sản phẩm của chúng tôi!', 'kha-solar' ); ?></p>
+				<div class="kha-empty-actions">
+					<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="kha-btn kha-btn-secondary">
+						<?php esc_html_e( 'Trang chủ', 'kha-solar' ); ?>
+					</a>
+					<a href="<?php echo esc_url( get_post_type_archive_link( 'kha_product' ) ); ?>" class="kha-btn kha-btn-primary">
+						<?php esc_html_e( 'Sản phẩm', 'kha-solar' ); ?>
+					</a>
+				</div>
 			</div>
 
-			<a href="<?php echo esc_url( kha_solar_get_page_url( 'checkout' ) ); ?>" class="kha-checkout-btn">
-				<?php esc_html_e( 'Proceed to Checkout', 'kha-solar' ); ?>
-			</a>
+		<?php endif; ?>
 
-			<a href="<?php echo esc_url( kha_solar_get_page_url( 'shop' ) ); ?>" class="kha-continue-shopping" style="display: block; text-align: center; margin-top: 15px; color: #666; text-decoration: none;">
-				<?php esc_html_e( '← Continue Shopping', 'kha-solar' ); ?>
-			</a>
-		</div>
-
-	<?php else : ?>
-
-		<div class="kha-empty-cart">
-			<div class="kha-empty-cart-icon">🛒</div>
-			<h2><?php esc_html_e( 'Your cart is empty', 'kha-solar' ); ?></h2>
-			<p><?php esc_html_e( 'Add some products to get started!', 'kha-solar' ); ?></p>
-			<a href="<?php echo esc_url( kha_solar_get_page_url( 'shop' ) ); ?>" class="kha-continue-shopping">
-				<?php esc_html_e( 'Start Shopping', 'kha-solar' ); ?>
-			</a>
-		</div>
-
-	<?php endif; ?>
+	</div>
 </div>
+
+<?php get_footer(); ?>

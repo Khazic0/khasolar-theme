@@ -74,6 +74,14 @@ class Ajax_Handler {
 		// Product comparison.
 		add_action( 'wp_ajax_kha_get_comparison_data', array( $this, 'get_comparison_data' ) );
 		add_action( 'wp_ajax_nopriv_kha_get_comparison_data', array( $this, 'get_comparison_data' ) );
+
+		// Shopping cart.
+		add_action( 'wp_ajax_kha_add_to_cart', array( $this, 'add_to_cart' ) );
+		add_action( 'wp_ajax_nopriv_kha_add_to_cart', array( $this, 'add_to_cart' ) );
+		add_action( 'wp_ajax_kha_update_cart_quantity', array( $this, 'update_cart_quantity' ) );
+		add_action( 'wp_ajax_nopriv_kha_update_cart_quantity', array( $this, 'update_cart_quantity' ) );
+		add_action( 'wp_ajax_kha_remove_cart_item', array( $this, 'remove_cart_item' ) );
+		add_action( 'wp_ajax_nopriv_kha_remove_cart_item', array( $this, 'remove_cart_item' ) );
 	}
 
 	/**
@@ -853,5 +861,244 @@ class Ajax_Handler {
 		$data       = $comparison->get_comparison_data( $product_ids );
 
 		wp_send_json_success( $data );
+	}
+
+	/**
+	 * Add product to cart via AJAX.
+	 *
+	 * @since 1.0.0
+	 */
+	public function add_to_cart() {
+		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
+
+		$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+		$quantity   = isset( $_POST['quantity'] ) ? absint( $_POST['quantity'] ) : 1;
+
+		if ( ! $product_id ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Sản phẩm không hợp lệ.', 'kha-solar' ),
+				)
+			);
+		}
+
+		$cart   = new Cart();
+		$result = $cart->add_to_cart( $product_id, $quantity );
+
+		if ( ! $result['success'] ) {
+			wp_send_json_error(
+				array(
+					'message' => $result['message'],
+				)
+			);
+		}
+
+		// Get updated cart data
+		$cart_count = $cart->get_cart_count();
+		$cart_items = $cart->get_cart_contents();
+
+		// Render mini cart items HTML
+		ob_start();
+		foreach ( $cart_items as $item ) {
+			echo '<div class="kha-mini-cart-item" data-product-id="' . esc_attr( $item['product_id'] ) . '">';
+			echo '<div class="kha-mini-item-image">';
+			if ( $item['thumbnail'] ) {
+				echo '<img src="' . esc_url( $item['thumbnail'] ) . '" alt="' . esc_attr( $item['title'] ) . '">';
+			} else {
+				echo '<div class="kha-no-image"><span class="dashicons dashicons-camera"></span></div>';
+			}
+			echo '</div>';
+			echo '<div class="kha-mini-item-info">';
+			echo '<h4 class="kha-mini-item-title">' . esc_html( $item['title'] ) . '</h4>';
+			echo '<div class="kha-mini-item-meta">' . esc_html( $item['quantity'] ) . ' × ' . kha_solar_format_price( $item['price'] ) . '</div>';
+			echo '<div class="kha-mini-item-subtotal">= ' . kha_solar_format_price( $item['subtotal'] ) . '</div>';
+			echo '</div>';
+			echo '<button class="kha-mini-item-remove" data-product-id="' . esc_attr( $item['product_id'] ) . '"><span class="dashicons dashicons-trash"></span></button>';
+			echo '</div>';
+		}
+		$mini_cart_html = ob_get_clean();
+
+		wp_send_json_success(
+			array(
+				'message'        => $result['message'],
+				'cart_count'     => $cart_count,
+				'mini_cart_html' => $mini_cart_html,
+			)
+		);
+	}
+
+	/**
+	 * Update cart item quantity via AJAX.
+	 *
+	 * @since 1.0.0
+	 */
+	public function update_cart_quantity() {
+		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
+
+		$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+		$quantity   = isset( $_POST['quantity'] ) ? absint( $_POST['quantity'] ) : 1;
+
+		if ( ! $product_id ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Sản phẩm không hợp lệ.', 'kha-solar' ),
+				)
+			);
+		}
+
+		$cart   = new Cart();
+		$result = $cart->update_quantity( $product_id, $quantity );
+
+		if ( ! $result['success'] ) {
+			wp_send_json_error(
+				array(
+					'message' => $result['message'],
+				)
+			);
+		}
+
+		// Get updated cart data
+		$cart_items    = $cart->get_cart_contents();
+		$cart_subtotal = $cart->get_cart_subtotal();
+		$shipping_fee  = $cart->get_shipping_fee();
+		$cart_total    = $cart->get_cart_total();
+		$cart_count    = $cart->get_cart_count();
+
+		// Get item subtotal
+		$item_subtotal = '';
+		foreach ( $cart_items as $item ) {
+			if ( $item['product_id'] == $product_id ) {
+				$item_subtotal = kha_solar_format_price( $item['subtotal'] );
+				break;
+			}
+		}
+
+		// Render shipping notice
+		$remaining = $cart->get_remaining_for_free_shipping();
+		ob_start();
+		if ( $remaining > 0 ) {
+			echo '<div class="kha-shipping-notice">';
+			echo '<span class="dashicons dashicons-info"></span>';
+			printf(
+				/* translators: %s: remaining amount for free shipping */
+				esc_html__( 'Mua thêm %s để được miễn phí vận chuyển!', 'kha-solar' ),
+				'<strong>' . kha_solar_format_price( $remaining ) . '</strong>'
+			);
+			echo '<div class="kha-shipping-progress">';
+			$progress = ( $cart_subtotal / $cart->get_free_shipping_threshold() ) * 100;
+			$progress = min( $progress, 100 );
+			echo '<div class="kha-progress-bar" style="width: ' . esc_attr( $progress ) . '%"></div>';
+			echo '</div>';
+			echo '</div>';
+		} else {
+			echo '<div class="kha-shipping-notice kha-free-shipping">';
+			echo '<span class="dashicons dashicons-yes-alt"></span>';
+			esc_html_e( 'Bạn đã đủ điều kiện để được miễn phí vận chuyển!', 'kha-solar' );
+			echo '</div>';
+		}
+		$shipping_notice_html = ob_get_clean();
+
+		// Format shipping fee
+		$shipping_fee_html = $shipping_fee > 0
+			? kha_solar_format_price( $shipping_fee )
+			: '<span class="kha-text-success">' . __( 'Miễn phí', 'kha-solar' ) . '</span>';
+
+		wp_send_json_success(
+			array(
+				'message'              => $result['message'],
+				'item_subtotal'        => $item_subtotal,
+				'cart_subtotal'        => kha_solar_format_price( $cart_subtotal ),
+				'shipping_fee'         => $shipping_fee_html,
+				'cart_total'           => kha_solar_format_price( $cart_total ),
+				'cart_count'           => $cart_count,
+				'shipping_notice_html' => $shipping_notice_html,
+			)
+		);
+	}
+
+	/**
+	 * Remove item from cart via AJAX.
+	 *
+	 * @since 1.0.0
+	 */
+	public function remove_cart_item() {
+		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
+
+		$product_id = isset( $_POST['product_id'] ) ? absint( $_POST['product_id'] ) : 0;
+
+		if ( ! $product_id ) {
+			wp_send_json_error(
+				array(
+					'message' => __( 'Sản phẩm không hợp lệ.', 'kha-solar' ),
+				)
+			);
+		}
+
+		$cart   = new Cart();
+		$result = $cart->remove_item( $product_id );
+
+		if ( ! $result['success'] ) {
+			wp_send_json_error(
+				array(
+					'message' => $result['message'],
+				)
+			);
+		}
+
+		// Get updated cart data
+		$cart_subtotal = $cart->get_cart_subtotal();
+		$shipping_fee  = $cart->get_shipping_fee();
+		$cart_total    = $cart->get_cart_total();
+		$cart_count    = $cart->get_cart_count();
+
+		// Empty cart HTML
+		$empty_cart_html = '<div class="kha-mini-cart-empty">';
+		$empty_cart_html .= '<div class="kha-empty-icon">🛒</div>';
+		$empty_cart_html .= '<p>' . __( 'Giỏ hàng trống', 'kha-solar' ) . '</p>';
+		$empty_cart_html .= '</div>';
+
+		// Render shipping notice
+		$remaining = $cart->get_remaining_for_free_shipping();
+		ob_start();
+		if ( $cart_count > 0 ) {
+			if ( $remaining > 0 ) {
+				echo '<div class="kha-shipping-notice">';
+				echo '<span class="dashicons dashicons-info"></span>';
+				printf(
+					/* translators: %s: remaining amount for free shipping */
+					esc_html__( 'Mua thêm %s để được miễn phí vận chuyển!', 'kha-solar' ),
+					'<strong>' . kha_solar_format_price( $remaining ) . '</strong>'
+				);
+				echo '<div class="kha-shipping-progress">';
+				$progress = ( $cart_subtotal / $cart->get_free_shipping_threshold() ) * 100;
+				$progress = min( $progress, 100 );
+				echo '<div class="kha-progress-bar" style="width: ' . esc_attr( $progress ) . '%"></div>';
+				echo '</div>';
+				echo '</div>';
+			} else {
+				echo '<div class="kha-shipping-notice kha-free-shipping">';
+				echo '<span class="dashicons dashicons-yes-alt"></span>';
+				esc_html_e( 'Bạn đã đủ điều kiện để được miễn phí vận chuyển!', 'kha-solar' );
+				echo '</div>';
+			}
+		}
+		$shipping_notice_html = ob_get_clean();
+
+		// Format shipping fee
+		$shipping_fee_html = $shipping_fee > 0
+			? kha_solar_format_price( $shipping_fee )
+			: '<span class="kha-text-success">' . __( 'Miễn phí', 'kha-solar' ) . '</span>';
+
+		wp_send_json_success(
+			array(
+				'message'              => $result['message'],
+				'cart_subtotal'        => kha_solar_format_price( $cart_subtotal ),
+				'shipping_fee'         => $shipping_fee_html,
+				'cart_total'           => kha_solar_format_price( $cart_total ),
+				'cart_count'           => $cart_count,
+				'empty_cart_html'      => $empty_cart_html,
+				'shipping_notice_html' => $shipping_notice_html,
+			)
+		);
 	}
 }
