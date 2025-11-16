@@ -429,3 +429,100 @@ function kha_solar_search_template( $template ) {
 	return $template;
 }
 add_filter( 'template_include', 'kha_solar_search_template' );
+
+/**
+ * Enqueue product filtering scripts.
+ */
+function kha_solar_enqueue_filter_scripts() {
+	if ( ! is_admin() && ( is_post_type_archive( 'kha_product' ) || is_tax( array( 'kha_product_cat', 'kha_brand' ) ) || has_shortcode( get_post()->post_content, 'kha_products_grid' ) ) ) {
+		wp_enqueue_script(
+			'kha-filter-products',
+			KHA_PLUGIN_URL . 'public/js/filter-products.js',
+			array( 'jquery' ),
+			KHA_VERSION,
+			true
+		);
+
+		wp_localize_script(
+			'kha-filter-products',
+			'khaFilterConfig',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'kha_solar_nonce' ),
+			)
+		);
+	}
+}
+add_action( 'wp_enqueue_scripts', 'kha_solar_enqueue_filter_scripts' );
+
+/**
+ * Products grid shortcode.
+ *
+ * Usage: [kha_products_grid filters="true" columns="4" per_page="12"]
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string Shortcode output.
+ */
+function kha_solar_products_grid_shortcode( $atts ) {
+	$atts = shortcode_atts(
+		array(
+			'filters'  => 'true',
+			'columns'  => '4',
+			'per_page' => '12',
+		),
+		$atts,
+		'kha_products_grid'
+	);
+
+	ob_start();
+
+	if ( 'true' === $atts['filters'] ) {
+		// Include full archive template with filters
+		kha_solar_get_template( 'archive-products.php' );
+	} else {
+		// Just the products grid
+		$args = array(
+			'post_type'      => 'kha_product',
+			'posts_per_page' => absint( $atts['per_page'] ),
+			'post_status'    => 'publish',
+		);
+
+		$products_query = new WP_Query( $args );
+
+		echo '<div class="kha-products-grid kha-grid-cols-' . esc_attr( $atts['columns'] ) . '">';
+
+		if ( $products_query->have_posts() ) {
+			while ( $products_query->have_posts() ) {
+				$products_query->the_post();
+				kha_solar_get_template( 'partials/product-card.php', array( 'product_id' => get_the_ID() ) );
+			}
+			wp_reset_postdata();
+		} else {
+			echo '<p>' . esc_html__( 'Không có sản phẩm nào.', 'kha-solar' ) . '</p>';
+		}
+
+		echo '</div>';
+	}
+
+	return ob_get_clean();
+}
+add_shortcode( 'kha_products_grid', 'kha_solar_products_grid_shortcode' );
+
+/**
+ * Load custom archive template for products.
+ *
+ * @param string $template The path to the template.
+ * @return string
+ */
+function kha_solar_archive_template( $template ) {
+	if ( is_post_type_archive( 'kha_product' ) || is_tax( array( 'kha_product_cat', 'kha_brand' ) ) ) {
+		$custom_template = KHA_PLUGIN_DIR . 'templates/archive-products.php';
+		
+		if ( file_exists( $custom_template ) ) {
+			return $custom_template;
+		}
+	}
+
+	return $template;
+}
+add_filter( 'template_include', 'kha_solar_archive_template', 99 );

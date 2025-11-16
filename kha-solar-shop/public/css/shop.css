@@ -1029,3 +1029,519 @@
 		width: 100%;
 	}
 }
+
+/* ==========================================================================
+   Product Filtering System
+   ========================================================================== */
+
+.kha-shop-page {
+	padding: 40px 0;
+	background: #f9f9f9;
+}
+
+.kha-mobile-controls {
+	display: none;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+	padding: 15px;
+	background: white;
+	border-radius: 8px;
+}
+
+.kha-mobile-filter-toggle {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 20px;
+	background: #0073aa;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.kha-shop-content {
+	display: grid;
+	grid-template-columns: 300px 1fr;
+	gap: 30px;
+}
+
+/* Filter Sidebar */
+.kha-filter-sidebar {
+	position: sticky;
+	top: 20px;
+	height: fit-content;
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+	overflow: hidden;
+}
+
+.kha-filter-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px;
+	border-bottom: 2px solid #0073aa;
+}
+
+.kha-filter-header h3 {
+	margin: 0;
+	font-size: 20px;
+	color: #333;
+}
+
+.kha-filter-close {
+	display: none;
+	width: 30px;
+	height: 30px;
+	border: none;
+	background: #f0f0f0;
+	border-radius: 50%;
+	font-size: 24px;
+	cursor: pointer;
+	color: #666;
+}
+
+.kha-filter-inner {
+	padding: 20px;
+	max-height: calc(100vh - 140px);
+	overflow-y: auto;
+}
+
+.kha-filter-group {
+	margin-bottom: 25px;
+	padding-bottom: 20px;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.kha-filter-group:last-child {
+	border-bottom: none;
+}
+
+.kha-filter-group > label {
+	display: block;
+	margin-bottom: 15px;
+	font-weight: 700;
+	font-size: 15px;
+	color: #333;
+}
+
+/* Search Filter */
+.kha-filter-search input {
+	width: 100%;
+	padding: 10px 15px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	font-size: 14px;
+}
+
+.kha-filter-search input:focus {
+	border-color: #0073aa;
+	outline: none;
+}
+
+/* Price Slider */
+.kha-price-slider {
+	position: relative;
+	height: 6px;
+	background: #e0e0e0;
+	border-radius: 3px;
+	margin: 20px 10px;
+}
+
+.kha-slider-range {
+	position: absolute;
+	height: 100%;
+	background: #0073aa;
+	border-radius: 3px;
+}
+
+.kha-slider-handle {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	width: 18px;
+	height: 18px;
+	background: white;
+	border: 3px solid #0073aa;
+	border-radius: 50%;
+	cursor: pointer;
+	z-index: 2;
+	transition: transform 0.2s;
+}
+
+.kha-slider-handle:hover {
+	transform: translate(-50%, -50%) scale(1.2);
+}
+
+.kha-price-values {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 15px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #0073aa;
+}
+
+/* Checkbox Filters */
+.kha-filter-checkbox {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 0;
+	cursor: pointer;
+	user-select: none;
+}
+
+.kha-filter-checkbox input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	cursor: pointer;
+}
+
+.kha-filter-checkbox span {
+	font-size: 14px;
+	color: #555;
+}
+
+.kha-filter-checkbox:hover span {
+	color: #0073aa;
+}
+
+/* Reset Button */
+.kha-reset-filters {
+	width: 100%;
+	padding: 12px;
+	background: #dc3232;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.3s;
+}
+
+.kha-reset-filters:hover {
+	background: #a82a2a;
+}
+
+/* Active Filters */
+.kha-active-filters {
+	margin-bottom: 20px;
+	padding: 15px;
+	background: #e8f5fa;
+	border-radius: 8px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+}
+
+.kha-active-filters strong {
+	color: #333;
+	margin-right: 10px;
+}
+
+.kha-active-filter-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 12px;
+	background: white;
+	border: 1px solid #0073aa;
+	border-radius: 16px;
+	font-size: 13px;
+	color: #0073aa;
+}
+
+.kha-remove-filter {
+	width: 20px;
+	height: 20px;
+	border: none;
+	background: #dc3232;
+	color: white;
+	border-radius: 50%;
+	cursor: pointer;
+	font-size: 16px;
+	line-height: 1;
+	padding: 0;
+}
+
+.kha-remove-filter:hover {
+	background: #a82a2a;
+}
+
+/* Shop Toolbar */
+.kha-shop-toolbar {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 25px;
+	padding: 20px;
+	background: white;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.kha-toolbar-left {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+
+.kha-shop-title {
+	margin: 0;
+	font-size: 24px;
+	color: #333;
+}
+
+.kha-product-count {
+	font-size: 14px;
+	color: #666;
+}
+
+.kha-toolbar-right {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.kha-toolbar-right label {
+	font-weight: 600;
+	font-size: 14px;
+	color: #555;
+}
+
+.kha-sort-dropdown {
+	padding: 8px 15px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	font-size: 14px;
+	cursor: pointer;
+	min-width: 200px;
+}
+
+/* Product Skeleton Loading */
+.kha-product-skeleton {
+	background: white;
+	border: 1px solid #e0e0e0;
+	border-radius: 8px;
+	overflow: hidden;
+	animation: khaSkeletonPulse 1.5s ease-in-out infinite;
+}
+
+.kha-skeleton-image {
+	width: 100%;
+	aspect-ratio: 1;
+	background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+	background-size: 200% 100%;
+	animation: khaSkeletonShimmer 1.5s infinite;
+}
+
+.kha-skeleton-title {
+	height: 20px;
+	margin: 15px;
+	background: #f0f0f0;
+	border-radius: 4px;
+}
+
+.kha-skeleton-price {
+	height: 16px;
+	width: 60%;
+	margin: 10px 15px;
+	background: #f0f0f0;
+	border-radius: 4px;
+}
+
+@keyframes khaSkeletonShimmer {
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
+}
+
+@keyframes khaSkeletonPulse {
+	0%, 100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.7;
+	}
+}
+
+/* No Products */
+.kha-no-products {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: 80px 20px;
+	background: white;
+	border-radius: 12px;
+}
+
+.kha-no-products-icon {
+	font-size: 80px;
+	margin-bottom: 20px;
+}
+
+.kha-no-products h3 {
+	font-size: 24px;
+	margin-bottom: 10px;
+	color: #333;
+}
+
+.kha-no-products p {
+	font-size: 16px;
+	color: #666;
+}
+
+/* Mobile Filter Overlay */
+.kha-filter-overlay {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 998;
+}
+
+body.kha-filters-active .kha-filter-overlay {
+	display: block;
+}
+
+/* Mobile Responsive */
+@media screen and (max-width: 1024px) {
+	.kha-mobile-controls {
+		display: flex;
+	}
+
+	.kha-shop-content {
+		grid-template-columns: 1fr;
+	}
+
+	.kha-filter-sidebar {
+		position: fixed;
+		top: 0;
+		left: -100%;
+		bottom: 0;
+		width: 320px;
+		max-width: 85vw;
+		z-index: 999;
+		transition: left 0.3s ease;
+		border-radius: 0;
+		height: 100%;
+	}
+
+	.kha-filter-sidebar.kha-filters-open {
+		left: 0;
+	}
+
+	.kha-filter-close {
+		display: block;
+	}
+
+	.kha-shop-toolbar {
+		flex-direction: column;
+		gap: 15px;
+		align-items: flex-start;
+	}
+
+	.kha-toolbar-left,
+	.kha-toolbar-right {
+		width: 100%;
+	}
+
+	.kha-sort-dropdown {
+		width: 100%;
+	}
+
+	.kha-products-grid {
+		grid-template-columns: repeat(2, 1fr);
+		gap: 15px;
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.kha-shop-title {
+		font-size: 20px;
+	}
+
+	.kha-mobile-filter-toggle {
+		font-size: 14px;
+		padding: 8px 16px;
+	}
+}
+
+/* Enhanced Product Card Styles */
+.kha-product-card {
+	position: relative;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kha-product-card:hover {
+	transform: translateY(-8px);
+	box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.kha-sale-badge {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	padding: 6px 12px;
+	background: #dc3232;
+	color: white;
+	font-weight: 700;
+	font-size: 13px;
+	border-radius: 4px;
+	z-index: 2;
+	box-shadow: 0 2px 8px rgba(220, 50, 50, 0.4);
+}
+
+.kha-product-meta {
+	display: flex;
+	gap: 12px;
+	margin: 10px 0;
+	flex-wrap: wrap;
+}
+
+.kha-meta-item {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 12px;
+	color: #666;
+}
+
+.kha-meta-item .dashicons {
+	width: 16px;
+	height: 16px;
+	font-size: 16px;
+}
+
+.kha-product-stock {
+	margin-top: 10px;
+}
+
+.kha-price-sale {
+	color: #dc3232;
+	font-weight: 700;
+	font-size: 18px;
+}
+
+.kha-price-regular {
+	text-decoration: line-through;
+	color: #999;
+	margin-left: 8px;
+	font-size: 14px;
+}
+
+.kha-price-contact {
+	color: #0073aa;
+	font-weight: 600;
+}

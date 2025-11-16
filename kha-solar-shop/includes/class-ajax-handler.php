@@ -66,6 +66,10 @@ class Ajax_Handler {
 		// Autocomplete search.
 		add_action( 'wp_ajax_kha_autocomplete_search', array( $this, 'autocomplete_search' ) );
 		add_action( 'wp_ajax_nopriv_kha_autocomplete_search', array( $this, 'autocomplete_search' ) );
+
+		// Product filtering.
+		add_action( 'wp_ajax_kha_filter_products', array( $this, 'filter_products' ) );
+		add_action( 'wp_ajax_nopriv_kha_filter_products', array( $this, 'filter_products' ) );
 	}
 
 	/**
@@ -516,5 +520,314 @@ class Ajax_Handler {
 		$search->track_search( $search_term, $result_count );
 
 		wp_send_json_success( $suggestions );
+	}
+
+	/**
+	 * Filter products with AJAX.
+	 *
+	 * @since 1.0.0
+	 */
+	public function filter_products() {
+		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
+
+		$filters = isset( $_POST['filters'] ) ? $_POST['filters'] : array();
+
+		// Build query args
+		$args = array(
+			'post_type'      => 'kha_product',
+			'post_status'    => 'publish',
+			'posts_per_page' => 12,
+			'paged'          => isset( $filters['paged'] ) ? absint( $filters['paged'] ) : 1,
+		);
+
+		// Search query
+		if ( ! empty( $filters['search'] ) ) {
+			$args['s'] = sanitize_text_field( $filters['search'] );
+		}
+
+		// Order by
+		if ( ! empty( $filters['orderby'] ) ) {
+			switch ( $filters['orderby'] ) {
+				case 'price':
+					$args['orderby']  = 'meta_value_num';
+					$args['meta_key'] = '_price';
+					$args['order']    = 'ASC';
+					break;
+				case 'price-desc':
+					$args['orderby']  = 'meta_value_num';
+					$args['meta_key'] = '_price';
+					$args['order']    = 'DESC';
+					break;
+				case 'popularity':
+					$args['orderby']  = 'meta_value_num';
+					$args['meta_key'] = '_view_count';
+					$args['order']    = 'DESC';
+					break;
+				case 'rating':
+					$args['orderby']  = 'meta_value_num';
+					$args['meta_key'] = '_average_rating';
+					$args['order']    = 'DESC';
+					break;
+				default:
+					$args['orderby'] = 'date';
+					$args['order']   = 'DESC';
+			}
+		}
+
+		// Taxonomy filters
+		$tax_query = array();
+
+		if ( ! empty( $filters['categories'] ) && is_array( $filters['categories'] ) ) {
+			$tax_query[] = array(
+				'taxonomy' => 'kha_product_cat',
+				'field'    => 'term_id',
+				'terms'    => array_map( 'absint', $filters['categories'] ),
+			);
+		}
+
+		if ( ! empty( $filters['brands'] ) && is_array( $filters['brands'] ) ) {
+			$tax_query[] = array(
+				'taxonomy' => 'kha_brand',
+				'field'    => 'term_id',
+				'terms'    => array_map( 'absint', $filters['brands'] ),
+			);
+		}
+
+		if ( count( $tax_query ) > 1 ) {
+			$tax_query['relation'] = 'AND';
+		}
+
+		if ( ! empty( $tax_query ) ) {
+			$args['tax_query'] = $tax_query;
+		}
+
+		// Meta query
+		$meta_query = array();
+
+		// Price range
+		if ( ! empty( $filters['priceMin'] ) || ! empty( $filters['priceMax'] ) ) {
+			$price_query = array( 'key' => '_price', 'type' => 'NUMERIC' );
+
+			if ( ! empty( $filters['priceMin'] ) && ! empty( $filters['priceMax'] ) ) {
+				$price_query['value']   = array( floatval( $filters['priceMin'] ), floatval( $filters['priceMax'] ) );
+				$price_query['compare'] = 'BETWEEN';
+			} elseif ( ! empty( $filters['priceMin'] ) ) {
+				$price_query['value']   = floatval( $filters['priceMin'] );
+				$price_query['compare'] = '>=';
+			} elseif ( ! empty( $filters['priceMax'] ) ) {
+				$price_query['value']   = floatval( $filters['priceMax'] );
+				$price_query['compare'] = '<=';
+			}
+
+			$meta_query[] = $price_query;
+		}
+
+		// Power ranges
+		if ( ! empty( $filters['powerRanges'] ) && is_array( $filters['powerRanges'] ) ) {
+			$power_query = array( 'relation' => 'OR' );
+
+			foreach ( $filters['powerRanges'] as $range ) {
+				switch ( $range ) {
+					case '0-3000':
+						$power_query[] = array(
+							'key'     => '_power_output',
+							'value'   => 3000,
+							'type'    => 'NUMERIC',
+							'compare' => '<',
+						);
+						break;
+					case '3000-5000':
+						$power_query[] = array(
+							'key'     => '_power_output',
+							'value'   => array( 3000, 5000 ),
+							'type'    => 'NUMERIC',
+							'compare' => 'BETWEEN',
+						);
+						break;
+					case '5000-10000':
+						$power_query[] = array(
+							'key'     => '_power_output',
+							'value'   => array( 5000, 10000 ),
+							'type'    => 'NUMERIC',
+							'compare' => 'BETWEEN',
+						);
+						break;
+					case '10000+':
+						$power_query[] = array(
+							'key'     => '_power_output',
+							'value'   => 10000,
+							'type'    => 'NUMERIC',
+							'compare' => '>',
+						);
+						break;
+				}
+			}
+
+			if ( count( $power_query ) > 1 ) {
+				$meta_query[] = $power_query;
+			}
+		}
+
+		// Stock status
+		if ( ! empty( $filters['stockStatus'] ) && is_array( $filters['stockStatus'] ) ) {
+			$meta_query[] = array(
+				'key'     => '_stock_status',
+				'value'   => array_map( 'sanitize_text_field', $filters['stockStatus'] ),
+				'compare' => 'IN',
+			);
+		}
+
+		// On sale
+		if ( ! empty( $filters['onSale'] ) ) {
+			$meta_query[] = array(
+				'key'     => '_sale_price',
+				'value'   => 0,
+				'type'    => 'NUMERIC',
+				'compare' => '>',
+			);
+		}
+
+		// New products (last 30 days)
+		if ( ! empty( $filters['isNew'] ) ) {
+			$args['date_query'] = array(
+				array(
+					'after' => '30 days ago',
+				),
+			);
+		}
+
+		if ( count( $meta_query ) > 1 ) {
+			$meta_query['relation'] = 'AND';
+		}
+
+		if ( ! empty( $meta_query ) ) {
+			$args['meta_query'] = $meta_query;
+		}
+
+		// Execute query
+		$products_query = new \WP_Query( $args );
+
+		// Build products HTML
+		$products_html = '';
+		if ( $products_query->have_posts() ) {
+			while ( $products_query->have_posts() ) {
+				$products_query->the_post();
+				$products_html .= $this->render_product_card( get_the_ID() );
+			}
+			wp_reset_postdata();
+		} else {
+			$products_html = $this->render_no_products();
+		}
+
+		// Build pagination HTML
+		$pagination_html = '';
+		if ( $products_query->max_num_pages > 1 ) {
+			$pagination_html = paginate_links(
+				array(
+					'total'     => $products_query->max_num_pages,
+					'current'   => $args['paged'],
+					'type'      => 'list',
+					'prev_text' => '&laquo; ' . __( 'Trước', 'kha-solar' ),
+					'next_text' => __( 'Sau', 'kha-solar' ) . ' &raquo;',
+				)
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'products'      => $products_html,
+				'pagination'    => $pagination_html,
+				'found_posts'   => $products_query->found_posts,
+				'max_num_pages' => $products_query->max_num_pages,
+			)
+		);
+	}
+
+	/**
+	 * Render product card HTML.
+	 *
+	 * @param int $product_id Product ID.
+	 * @return string Product card HTML.
+	 */
+	private function render_product_card( $product_id ) {
+		$thumbnail    = get_the_post_thumbnail_url( $product_id, 'medium' );
+		$price        = get_post_meta( $product_id, '_price', true );
+		$regular_price = get_post_meta( $product_id, '_regular_price', true );
+		$sale_price   = get_post_meta( $product_id, '_sale_price', true );
+		$on_sale      = kha_is_product_on_sale( $product_id );
+		$power        = get_post_meta( $product_id, '_power_output', true );
+		$brand        = kha_get_product_brand( $product_id );
+
+		$html = '<article class="kha-product-card">';
+		$html .= '<a href="' . get_permalink( $product_id ) . '" class="kha-product-link">';
+
+		// Image
+		$html .= '<div class="kha-product-image">';
+		if ( $thumbnail ) {
+			$html .= '<img src="' . esc_url( $thumbnail ) . '" alt="' . esc_attr( get_the_title() ) . '" loading="lazy">';
+		} else {
+			$html .= '<div class="kha-no-image"><span class="dashicons dashicons-camera"></span></div>';
+		}
+
+		// Sale badge
+		if ( $on_sale && $regular_price && $sale_price ) {
+			$discount = round( ( ( $regular_price - $sale_price ) / $regular_price ) * 100 );
+			$html .= '<span class="kha-sale-badge">-' . $discount . '%</span>';
+		}
+
+		$html .= '</div>';
+
+		// Info
+		$html .= '<div class="kha-product-info">';
+		$html .= '<h3 class="kha-product-title">' . get_the_title() . '</h3>';
+
+		// Price
+		$html .= '<div class="kha-product-price">';
+		if ( $on_sale && $sale_price ) {
+			$html .= '<span class="kha-price-sale">' . kha_solar_format_price( $sale_price ) . '</span>';
+			$html .= '<span class="kha-price-regular">' . kha_solar_format_price( $regular_price ) . '</span>';
+		} elseif ( $price ) {
+			$html .= '<span class="kha-price-current">' . kha_solar_format_price( $price ) . '</span>';
+		} else {
+			$html .= '<span class="kha-price-contact">' . __( 'Liên Hệ', 'kha-solar' ) . '</span>';
+		}
+		$html .= '</div>';
+
+		// Meta
+		$html .= '<div class="kha-product-meta">';
+		if ( $power ) {
+			$power_formatted = $power >= 1000 ? ( $power / 1000 ) . ' kW' : $power . ' W';
+			$html .= '<span class="kha-meta-item"><span class="dashicons dashicons-admin-plugins"></span> ' . $power_formatted . '</span>';
+		}
+		if ( $brand ) {
+			$html .= '<span class="kha-meta-item"><span class="dashicons dashicons-admin-home"></span> ' . esc_html( $brand->name ) . '</span>';
+		}
+		$html .= '</div>';
+
+		// Stock status
+		$html .= '<div class="kha-product-stock">';
+		$html .= kha_get_product_stock_status( $product_id );
+		$html .= '</div>';
+
+		$html .= '</div>'; // .kha-product-info
+		$html .= '</a>';
+		$html .= '</article>';
+
+		return $html;
+	}
+
+	/**
+	 * Render no products message.
+	 *
+	 * @return string No products HTML.
+	 */
+	private function render_no_products() {
+		$html = '<div class="kha-no-products">';
+		$html .= '<div class="kha-no-products-icon">📦</div>';
+		$html .= '<h3>' . __( 'Không tìm thấy sản phẩm nào', 'kha-solar' ) . '</h3>';
+		$html .= '<p>' . __( 'Vui lòng thử điều chỉnh bộ lọc hoặc tìm kiếm với từ khóa khác.', 'kha-solar' ) . '</p>';
+		$html .= '</div>';
+
+		return $html;
 	}
 }
