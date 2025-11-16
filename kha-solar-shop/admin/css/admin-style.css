@@ -1,44 +1,364 @@
 /**
  * Kha Solar Shop - Admin Styles
  *
+ * Professional admin interface styling for product management
+ *
  * @package KhaSolar
  * @since   1.0.0
  */
 
-/* Meta Box Styling */
-.kha-product-meta-box {
-	padding: 12px;
+/* ==========================================================================
+   Tabbed Interface
+   ========================================================================== */
+
+.kha-product-data-panel {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	border-radius: 3px;
+	margin-top: 10px;
 }
 
-.kha-product-meta-box .form-table th {
-	width: 200px;
-	padding: 15px 10px;
+.kha-tabs {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	background: #f0f0f1;
+	border-bottom: 1px solid #ccd0d4;
+	display: flex;
 }
 
-.kha-product-meta-box .form-table td {
-	padding: 15px 10px;
+.kha-tabs li {
+	margin: 0;
+	padding: 0;
 }
 
-/* Product Gallery */
-#kha_product_gallery_container {
-	text-align: center;
+.kha-tabs li a {
+	display: block;
+	padding: 12px 20px;
+	text-decoration: none;
+	color: #50575e;
+	font-weight: 500;
+	border-bottom: 3px solid transparent;
+	transition: all 0.2s ease;
 }
 
-#kha_product_gallery_images {
+.kha-tabs li a:hover {
+	background: #fff;
+	color: #0073aa;
+}
+
+.kha-tabs li.active a {
+	background: #fff;
+	color: #0073aa;
+	border-bottom-color: #0073aa;
+}
+
+.kha-tab-content {
+	display: none;
+	padding: 20px;
+}
+
+.kha-tab-content.active {
+	display: block;
+}
+
+/* ==========================================================================
+   Form Fields
+   ========================================================================== */
+
+.kha-field-group {
+	margin-bottom: 20px;
 	display: flex;
 	flex-wrap: wrap;
+	gap: 15px;
+}
+
+.kha-field {
+	flex: 1;
+	min-width: 200px;
+}
+
+.kha-field label {
+	display: block;
+	margin-bottom: 6px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.kha-field input[type="text"],
+.kha-field input[type="number"],
+.kha-field textarea,
+.kha-field select {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	font-size: 14px;
+	line-height: 1.4;
+	transition: border-color 0.2s ease;
+}
+
+.kha-field input[type="text"]:focus,
+.kha-field input[type="number"]:focus,
+.kha-field textarea:focus,
+.kha-field select:focus {
+	border-color: #0073aa;
+	outline: none;
+	box-shadow: 0 0 0 1px #0073aa;
+}
+
+.kha-field textarea {
+	min-height: 80px;
+	resize: vertical;
+}
+
+.kha-field-description {
+	font-size: 13px;
+	color: #646970;
+	margin-top: 4px;
+	font-style: italic;
+}
+
+/* ==========================================================================
+   Toggle Switch
+   ========================================================================== */
+
+.kha-toggle-label {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.kha-toggle {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+	height: 26px;
+}
+
+.kha-toggle-input {
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.kha-toggle-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #dcdcde;
+	transition: 0.3s;
+	border-radius: 26px;
+}
+
+.kha-toggle-slider:before {
+	position: absolute;
+	content: "";
+	height: 20px;
+	width: 20px;
+	left: 3px;
+	bottom: 3px;
+	background-color: white;
+	transition: 0.3s;
+	border-radius: 50%;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.kha-toggle-input:checked + .kha-toggle-slider {
+	background-color: #0073aa;
+}
+
+.kha-toggle-input:checked + .kha-toggle-slider:before {
+	transform: translateX(24px);
+}
+
+.kha-toggle-input:focus + .kha-toggle-slider {
+	box-shadow: 0 0 0 2px #0073aa33;
+}
+
+/* ==========================================================================
+   Radio Groups (Visual Buttons)
+   ========================================================================== */
+
+.kha-radio-group {
+	display: flex;
+	gap: 10px;
+	flex-wrap: wrap;
+}
+
+.kha-radio-label {
+	cursor: pointer;
+}
+
+.kha-radio-label input[type="radio"] {
+	position: absolute;
+	opacity: 0;
+}
+
+.kha-radio-text {
+	display: inline-block;
+	padding: 8px 16px;
+	border: 2px solid #dcdcde;
+	border-radius: 4px;
+	background: #fff;
+	color: #50575e;
+	font-weight: 500;
+	transition: all 0.2s ease;
+	user-select: none;
+}
+
+.kha-radio-label:hover .kha-radio-text {
+	border-color: #0073aa;
+}
+
+.kha-radio-label input:checked + .kha-radio-text {
+	border-color: #0073aa;
+	background: #0073aa;
+	color: white;
+}
+
+/* ==========================================================================
+   Stock Quantity Controls
+   ========================================================================== */
+
+.kha-quantity-controls {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.kha-quantity-btn {
+	width: 32px;
+	height: 32px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background: #fff;
+	color: #50575e;
+	font-size: 18px;
+	font-weight: bold;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s ease;
+}
+
+.kha-quantity-btn:hover {
+	background: #f0f0f1;
+	border-color: #0073aa;
+	color: #0073aa;
+}
+
+.kha-quantity-btn:active {
+	background: #dcdcde;
+}
+
+.kha-quantity-input {
+	width: 80px;
+	text-align: center;
+	font-weight: 600;
+}
+
+/* ==========================================================================
+   Quick Fill Buttons
+   ========================================================================== */
+
+.kha-quick-fill-group {
+	display: flex;
+	gap: 8px;
+	margin-top: 8px;
+	flex-wrap: wrap;
+}
+
+.kha-quick-fill-btn {
+	padding: 6px 12px;
+	border: 1px solid #8c8f94;
+	border-radius: 3px;
+	background: #fff;
+	color: #2271b1;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.kha-quick-fill-btn:hover {
+	background: #f0f0f1;
+	border-color: #2271b1;
+}
+
+.kha-quick-fill-btn:active {
+	background: #dcdcde;
+}
+
+/* ==========================================================================
+   SKU Generator
+   ========================================================================== */
+
+.kha-sku-generator {
+	display: flex;
+	gap: 10px;
+	align-items: flex-end;
+}
+
+.kha-sku-generator .kha-field {
+	flex: 1;
+}
+
+.kha-generate-sku-btn {
+	padding: 8px 16px;
+	background: #0073aa;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-weight: 500;
+	transition: background 0.2s ease;
+	white-space: nowrap;
+}
+
+.kha-generate-sku-btn:hover {
+	background: #005a87;
+}
+
+.kha-generate-sku-btn:active {
+	background: #004468;
+}
+
+/* ==========================================================================
+   Product Gallery
+   ========================================================================== */
+
+.kha-gallery-wrapper {
+	margin-top: 10px;
+}
+
+.kha-gallery-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 	gap: 10px;
 	margin-bottom: 15px;
 }
 
 .kha-gallery-image {
 	position: relative;
-	display: inline-block;
-	width: 100px;
-	height: 100px;
-	border: 2px solid #ddd;
+	aspect-ratio: 1;
+	background: #f0f0f1;
+	border: 2px solid #dcdcde;
 	border-radius: 4px;
 	overflow: hidden;
+	cursor: move;
+	transition: all 0.2s ease;
+}
+
+.kha-gallery-image:hover {
+	border-color: #0073aa;
+	transform: scale(1.02);
 }
 
 .kha-gallery-image img {
@@ -47,7 +367,7 @@
 	object-fit: cover;
 }
 
-.kha-gallery-image .remove-gallery-image {
+.kha-gallery-remove {
 	position: absolute;
 	top: 5px;
 	right: 5px;
@@ -58,109 +378,273 @@
 	border: none;
 	border-radius: 50%;
 	cursor: pointer;
-	font-size: 18px;
-	line-height: 1;
-	padding: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	opacity: 0;
+	transition: opacity 0.2s ease;
 }
 
-.kha-gallery-image .remove-gallery-image:hover {
-	background: #a00;
+.kha-gallery-image:hover .kha-gallery-remove {
+	opacity: 1;
 }
 
-/* Order Management */
-.kha-order-details {
+.kha-gallery-remove:hover {
+	background: #a82a2a;
+}
+
+.kha-add-gallery-btn {
+	padding: 10px 20px;
+	background: #0073aa;
+	color: white;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-weight: 500;
+	transition: background 0.2s ease;
+}
+
+.kha-add-gallery-btn:hover {
+	background: #005a87;
+}
+
+.kha-gallery-placeholder {
+	padding: 40px;
+	text-align: center;
 	background: #f9f9f9;
-	padding: 20px;
-	border: 1px solid #ddd;
+	border: 2px dashed #dcdcde;
 	border-radius: 4px;
-	margin-top: 20px;
-}
-
-.kha-order-details h3 {
-	margin-top: 0;
-	border-bottom: 1px solid #ddd;
-	padding-bottom: 10px;
-}
-
-.kha-order-info {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 15px;
-	margin-bottom: 20px;
-}
-
-.kha-order-info-item {
-	padding: 10px;
-	background: white;
-	border: 1px solid #ddd;
-	border-radius: 4px;
-}
-
-.kha-order-info-item strong {
-	display: block;
-	margin-bottom: 5px;
-	color: #666;
-	font-size: 12px;
-	text-transform: uppercase;
-}
-
-.kha-order-status {
-	display: inline-block;
-	padding: 5px 12px;
-	border-radius: 3px;
-	font-size: 12px;
-	font-weight: 600;
-	text-transform: uppercase;
-}
-
-.kha-order-status.pending {
-	background: #f0f0f1;
 	color: #646970;
 }
 
-.kha-order-status.processing {
-	background: #72aee6;
-	color: white;
+/* ==========================================================================
+   Bundle Product Search
+   ========================================================================== */
+
+.kha-bundle-search {
+	position: relative;
+	margin-bottom: 15px;
 }
 
-.kha-order-status.completed {
-	background: #00a32a;
-	color: white;
-}
-
-.kha-order-status.cancelled {
-	background: #dc3232;
-	color: white;
-}
-
-/* Settings Page */
-.kha-settings-section {
-	background: white;
-	padding: 20px;
-	margin-bottom: 20px;
-	border: 1px solid #ddd;
+.kha-bundle-search input {
+	width: 100%;
+	padding: 8px 12px;
+	border: 1px solid #8c8f94;
 	border-radius: 4px;
 }
 
-.kha-settings-section h2 {
-	margin-top: 0;
-	padding-bottom: 10px;
-	border-bottom: 1px solid #ddd;
+.kha-bundle-search-results {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	background: white;
+	border: 1px solid #8c8f94;
+	border-top: none;
+	border-radius: 0 0 4px 4px;
+	max-height: 200px;
+	overflow-y: auto;
+	z-index: 1000;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive */
-@media (max-width: 782px) {
-	.kha-product-meta-box .form-table th,
-	.kha-product-meta-box .form-table td {
-		display: block;
+.kha-bundle-search-result {
+	padding: 10px 12px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.kha-bundle-search-result:hover {
+	background: #f0f0f1;
+}
+
+.kha-bundle-search-result img {
+	width: 40px;
+	height: 40px;
+	object-fit: cover;
+	border-radius: 3px;
+}
+
+.kha-selected-bundles {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.kha-bundle-item {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px;
+	background: #f9f9f9;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+}
+
+.kha-bundle-item img {
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	border-radius: 3px;
+}
+
+.kha-bundle-item-info {
+	flex: 1;
+}
+
+.kha-bundle-item-title {
+	font-weight: 600;
+	color: #1d2327;
+	margin-bottom: 4px;
+}
+
+.kha-bundle-item-price {
+	font-size: 13px;
+	color: #646970;
+}
+
+.kha-bundle-remove {
+	padding: 6px 12px;
+	background: #dc3232;
+	color: white;
+	border: none;
+	border-radius: 3px;
+	cursor: pointer;
+	font-size: 12px;
+	transition: background 0.2s ease;
+}
+
+.kha-bundle-remove:hover {
+	background: #a82a2a;
+}
+
+/* ==========================================================================
+   Custom Columns
+   ========================================================================== */
+
+.column-kha_image {
+	width: 60px;
+}
+
+.column-kha_sku {
+	width: 120px;
+}
+
+.column-kha_price {
+	width: 120px;
+}
+
+.column-kha_stock {
+	width: 150px;
+}
+
+.kha-product-image {
+	width: 50px;
+	height: 50px;
+	object-fit: cover;
+	border-radius: 3px;
+	border: 1px solid #dcdcde;
+}
+
+.kha-stock-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 10px;
+	border-radius: 3px;
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.kha-stock-instock {
+	background: #edfaef;
+	color: #2d7a3e;
+}
+
+.kha-stock-outofstock {
+	background: #fcf0f1;
+	color: #d63638;
+}
+
+.kha-stock-onbackorder {
+	background: #fff8e5;
+	color: #996800;
+}
+
+.kha-price-display {
+	font-weight: 600;
+	color: #2d7a3e;
+}
+
+.kha-price-sale {
+	color: #dc3232;
+}
+
+.kha-price-regular {
+	text-decoration: line-through;
+	color: #646970;
+	margin-left: 8px;
+	font-weight: 400;
+}
+
+/* ==========================================================================
+   Responsive Design
+   ========================================================================== */
+
+@media screen and (max-width: 782px) {
+	.kha-tabs li a {
+		padding: 10px 15px;
+		font-size: 13px;
+	}
+
+	.kha-field-group {
+		flex-direction: column;
+	}
+
+	.kha-field {
+		min-width: 100%;
+	}
+
+	.kha-sku-generator {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.kha-generate-sku-btn {
 		width: 100%;
-		padding: 10px 0;
 	}
 
-	.kha-order-info {
-		grid-template-columns: 1fr;
+	.kha-gallery-grid {
+		grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
 	}
 }
+
+/* ==========================================================================
+   Utility Classes
+   ========================================================================== */
+
+.kha-text-success {
+	color: #46b450;
+}
+
+.kha-text-warning {
+	color: #ffb900;
+}
+
+.kha-text-danger {
+	color: #dc3232;
+}
+
+.kha-text-muted {
+	color: #646970;
+}
+
+.kha-mt-0 { margin-top: 0; }
+.kha-mt-10 { margin-top: 10px; }
+.kha-mt-20 { margin-top: 20px; }
+.kha-mb-0 { margin-bottom: 0; }
+.kha-mb-10 { margin-bottom: 10px; }
+.kha-mb-20 { margin-bottom: 20px; }

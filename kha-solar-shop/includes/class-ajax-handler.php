@@ -58,6 +58,10 @@ class Ajax_Handler {
 		// Product view tracking.
 		add_action( 'wp_ajax_kha_track_view', array( $this, 'track_product_view' ) );
 		add_action( 'wp_ajax_nopriv_kha_track_view', array( $this, 'track_product_view' ) );
+
+		// Admin-only actions.
+		add_action( 'wp_ajax_kha_get_gallery_images', array( $this, 'get_gallery_images' ) );
+		add_action( 'wp_ajax_kha_get_bundle_products', array( $this, 'get_bundle_products' ) );
 	}
 
 	/**
@@ -174,15 +178,58 @@ class Ajax_Handler {
 	 * @since 1.0.0
 	 */
 	public function search_products() {
-		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
-
-		$search_term = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
-
-		if ( empty( $search_term ) ) {
-			wp_send_json_success( array( 'products' => array() ) );
+		// Check nonce based on context (admin or frontend)
+		if ( is_admin() && isset( $_POST['nonce'] ) ) {
+			check_ajax_referer( 'kha_product_data_nonce', 'nonce' );
+		} else {
+			check_ajax_referer( 'kha_solar_nonce', 'nonce' );
 		}
 
-		$search = new Search();
+		$search_term = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
+		$exclude     = isset( $_POST['exclude'] ) ? (array) $_POST['exclude'] : array();
+
+		if ( empty( $search_term ) ) {
+			wp_send_json_success( array() );
+		}
+
+		// Admin bundle search
+		if ( is_admin() && current_user_can( 'edit_posts' ) ) {
+			$args = array(
+				'post_type'      => 'kha_product',
+				's'              => $search_term,
+				'posts_per_page' => 10,
+				'post_status'    => 'publish',
+			);
+
+			if ( ! empty( $exclude ) ) {
+				$args['post__not_in'] = array_map( 'absint', $exclude );
+			}
+
+			$query = new \WP_Query( $args );
+			$products = array();
+
+			if ( $query->have_posts() ) {
+				while ( $query->have_posts() ) {
+					$query->the_post();
+					$product_id = get_the_ID();
+					$thumbnail  = get_the_post_thumbnail_url( $product_id, 'thumbnail' );
+					$price      = get_post_meta( $product_id, '_price', true );
+
+					$products[] = array(
+						'id'    => $product_id,
+						'title' => get_the_title(),
+						'image' => $thumbnail ? $thumbnail : '',
+						'price' => $price ? kha_solar_format_price( $price ) : '',
+					);
+				}
+				wp_reset_postdata();
+			}
+
+			wp_send_json_success( $products );
+		}
+
+		// Frontend search
+		$search  = new Search();
 		$results = $search->search( $search_term );
 
 		wp_send_json_success( array( 'products' => $results ) );
@@ -358,5 +405,82 @@ class Ajax_Handler {
 		}
 
 		wp_send_json_success();
+	}
+
+	/**
+	 * Get gallery images for admin.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_gallery_images() {
+		check_ajax_referer( 'kha_product_data_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Unauthorized.', 'kha-solar' ) ) );
+		}
+
+		$image_ids = isset( $_POST['image_ids'] ) ? (array) $_POST['image_ids'] : array();
+
+		if ( empty( $image_ids ) ) {
+			wp_send_json_success( array() );
+		}
+
+		$images = array();
+
+		foreach ( $image_ids as $image_id ) {
+			$image_id = absint( $image_id );
+			$image_url = wp_get_attachment_image_url( $image_id, 'thumbnail' );
+
+			if ( $image_url ) {
+				$images[] = array(
+					'id'  => $image_id,
+					'url' => $image_url,
+				);
+			}
+		}
+
+		wp_send_json_success( $images );
+	}
+
+	/**
+	 * Get bundle products for admin.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_bundle_products() {
+		check_ajax_referer( 'kha_product_data_nonce', 'nonce' );
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			wp_send_json_error( array( 'message' => __( 'Unauthorized.', 'kha-solar' ) ) );
+		}
+
+		$product_ids = isset( $_POST['product_ids'] ) ? (array) $_POST['product_ids'] : array();
+
+		if ( empty( $product_ids ) ) {
+			wp_send_json_success( array() );
+		}
+
+		$products = array();
+
+		foreach ( $product_ids as $product_id ) {
+			$product_id = absint( $product_id );
+			$product    = get_post( $product_id );
+
+			if ( ! $product || 'kha_product' !== $product->post_type ) {
+				continue;
+			}
+
+			$thumbnail = get_the_post_thumbnail_url( $product_id, 'thumbnail' );
+			$price     = get_post_meta( $product_id, '_price', true );
+
+			$products[] = array(
+				'id'    => $product_id,
+				'title' => $product->post_title,
+				'image' => $thumbnail ? $thumbnail : '',
+				'price' => $price ? kha_solar_format_price( $price ) : '',
+			);
+		}
+
+		wp_send_json_success( $products );
 	}
 }
