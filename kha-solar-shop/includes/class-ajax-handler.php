@@ -62,6 +62,10 @@ class Ajax_Handler {
 		// Admin-only actions.
 		add_action( 'wp_ajax_kha_get_gallery_images', array( $this, 'get_gallery_images' ) );
 		add_action( 'wp_ajax_kha_get_bundle_products', array( $this, 'get_bundle_products' ) );
+
+		// Autocomplete search.
+		add_action( 'wp_ajax_kha_autocomplete_search', array( $this, 'autocomplete_search' ) );
+		add_action( 'wp_ajax_nopriv_kha_autocomplete_search', array( $this, 'autocomplete_search' ) );
 	}
 
 	/**
@@ -482,5 +486,35 @@ class Ajax_Handler {
 		}
 
 		wp_send_json_success( $products );
+	}
+
+	/**
+	 * Autocomplete search for products.
+	 *
+	 * @since 1.0.0
+	 */
+	public function autocomplete_search() {
+		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
+
+		$search_term = isset( $_POST['search'] ) ? sanitize_text_field( $_POST['search'] ) : '';
+
+		if ( empty( $search_term ) || strlen( $search_term ) < 2 ) {
+			wp_send_json_success(
+				array(
+					'products'   => array(),
+					'categories' => array(),
+					'popular'    => array(),
+				)
+			);
+		}
+
+		$search = new Search();
+		$suggestions = $search->get_autocomplete_suggestions( $search_term, 8 );
+
+		// Track the search.
+		$result_count = count( $suggestions['products'] );
+		$search->track_search( $search_term, $result_count );
+
+		wp_send_json_success( $suggestions );
 	}
 }

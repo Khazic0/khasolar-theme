@@ -407,3 +407,25 @@ function kha_solar_format_price( $price ) {
 
 	return $formatted_price . ' ' . $currency_symbol;
 }
+
+/**
+ * Load custom search template for product searches.
+ *
+ * @param string $template The path to the template.
+ * @return string
+ */
+function kha_solar_search_template( $template ) {
+	global $wp_query;
+
+	// Check if this is a search for products
+	if ( is_search() && isset( $_GET['post_type'] ) && 'kha_product' === $_GET['post_type'] ) {
+		$custom_template = KHA_PLUGIN_DIR . 'templates/search-results.php';
+		
+		if ( file_exists( $custom_template ) ) {
+			return $custom_template;
+		}
+	}
+
+	return $template;
+}
+add_filter( 'template_include', 'kha_solar_search_template' );
