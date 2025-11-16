@@ -80,6 +80,11 @@ function kha_solar_autoloader( $class ) {
 spl_autoload_register( 'kha_solar_autoloader' );
 
 /**
+ * Load product helper functions.
+ */
+require_once KHA_PLUGIN_DIR . 'includes/product-functions.php';
+
+/**
  * The code that runs during plugin activation.
  */
 function activate_kha_solar_shop() {

@@ -38,6 +38,9 @@ class Activator {
 		// Create product image sizes.
 		self::create_image_sizes();
 
+		// Create default taxonomy terms.
+		self::create_default_terms();
+
 		// Flush rewrite rules.
 		self::flush_rewrite_rules();
 
@@ -302,6 +305,64 @@ class Activator {
 
 		// Product gallery thumbnail - 150x150.
 		add_image_size( 'kha-product-gallery-thumb', 150, 150, true );
+	}
+
+	/**
+	 * Create default taxonomy terms.
+	 *
+	 * Creates default product categories and brands.
+	 *
+	 * @since 1.0.0
+	 */
+	private static function create_default_terms() {
+		// Register taxonomies first.
+		if ( class_exists( 'KhaSolar\Product_Post_Type' ) ) {
+			$product_post_type = new Product_Post_Type();
+			$product_post_type->register_taxonomies();
+		}
+
+		// Default product categories.
+		$categories = array(
+			'inverter'       => __( 'Inverter (Biến tần)', 'kha-solar' ),
+			'solar-battery'  => __( 'Pin Năng Lượng Mặt Trời', 'kha-solar' ),
+			'solar-panel'    => __( 'Tấm Pin Mặt Trời', 'kha-solar' ),
+			'accessories'    => __( 'Phụ Kiện & Thiết Bị Kèm Theo', 'kha-solar' ),
+			'combo-packages' => __( 'Combo & Gói Lắp Đặt', 'kha-solar' ),
+		);
+
+		foreach ( $categories as $slug => $name ) {
+			if ( ! term_exists( $slug, 'kha_product_cat' ) ) {
+				wp_insert_term(
+					$name,
+					'kha_product_cat',
+					array(
+						'slug' => $slug,
+					)
+				);
+			}
+		}
+
+		// Default brands.
+		$brands = array(
+			'growatt' => 'Growatt',
+			'deye'    => 'Deye',
+			'sma'     => 'SMA',
+			'huawei'  => 'Huawei',
+			'jinko'   => 'Jinko Solar',
+			'longi'   => 'Longi Solar',
+		);
+
+		foreach ( $brands as $slug => $name ) {
+			if ( ! term_exists( $slug, 'kha_brand' ) ) {
+				wp_insert_term(
+					$name,
+					'kha_brand',
+					array(
+						'slug' => $slug,
+					)
+				);
+			}
+		}
 	}
 
 	/**
