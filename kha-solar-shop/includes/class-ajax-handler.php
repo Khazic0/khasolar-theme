@@ -70,6 +70,10 @@ class Ajax_Handler {
 		// Product filtering.
 		add_action( 'wp_ajax_kha_filter_products', array( $this, 'filter_products' ) );
 		add_action( 'wp_ajax_nopriv_kha_filter_products', array( $this, 'filter_products' ) );
+
+		// Product comparison.
+		add_action( 'wp_ajax_kha_get_comparison_data', array( $this, 'get_comparison_data' ) );
+		add_action( 'wp_ajax_nopriv_kha_get_comparison_data', array( $this, 'get_comparison_data' ) );
 	}
 
 	/**
@@ -829,5 +833,25 @@ class Ajax_Handler {
 		$html .= '</div>';
 
 		return $html;
+	}
+
+	/**
+	 * Get comparison data for products.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_comparison_data() {
+		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
+
+		$product_ids = isset( $_POST['product_ids'] ) ? (array) $_POST['product_ids'] : array();
+
+		if ( empty( $product_ids ) ) {
+			wp_send_json_success( array() );
+		}
+
+		$comparison = new Comparison();
+		$data       = $comparison->get_comparison_data( $product_ids );
+
+		wp_send_json_success( $data );
 	}
 }

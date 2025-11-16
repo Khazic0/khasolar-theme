@@ -1,281 +1,717 @@
 /**
- * Kha Solar Shop - Product Comparison Styles
+ * Kha Solar Shop - Comparison Styles
  *
  * @package KhaSolar
  * @since   1.0.0
  */
 
-.kha-comparison-wrapper {
-	max-width: 1400px;
-	margin: 40px auto;
-	padding: 0 20px;
-}
+/* ==========================================================================
+   Compare Checkbox on Product Cards
+   ========================================================================== */
 
-.kha-comparison-header {
-	background: white;
-	padding: 20px 30px;
-	border-radius: 8px;
-	margin-bottom: 30px;
+.kha-compare-checkbox {
 	display: flex;
-	justify-content: space-between;
 	align-items: center;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	gap: 6px;
+	padding: 8px 0;
+	cursor: pointer;
+	user-select: none;
+	font-size: 13px;
+	color: #0073aa;
+	font-weight: 500;
 }
 
-.kha-comparison-header h2 {
-	margin: 0;
+.kha-compare-checkbox input[type="checkbox"] {
+	width: 16px;
+	height: 16px;
+	cursor: pointer;
+}
+
+.kha-compare-checkbox:hover {
+	color: #005a87;
+}
+
+/* ==========================================================================
+   Floating Comparison Bar
+   ========================================================================== */
+
+.kha-comparison-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: linear-gradient(135deg, #0073aa 0%, #005a87 100%);
+	box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+	z-index: 999;
+	transform: translateY(100%);
+	transition: transform 0.3s ease;
+}
+
+.kha-comparison-bar:not([style*="display: none"]) {
+	transform: translateY(0);
+}
+
+.kha-comparison-bar-inner {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 15px 20px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20px;
+}
+
+.kha-comparison-bar-left {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: white;
+	flex-shrink: 0;
+}
+
+.kha-comparison-icon {
 	font-size: 24px;
 }
 
-.kha-clear-comparison {
-	padding: 10px 20px;
-	background: #dc3545;
-	color: white;
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	font-weight: 600;
-	transition: background 0.2s;
+.kha-comparison-title {
+	font-weight: 700;
+	font-size: 16px;
 }
 
-.kha-clear-comparison:hover {
-	background: #c82333;
+.kha-comparison-count {
+	opacity: 0.9;
+	font-weight: 400;
+	font-size: 14px;
 }
 
-.kha-comparison-table-wrapper {
+.kha-comparison-bar-center {
+	flex: 1;
+	overflow-x: auto;
+}
+
+.kha-comparison-products {
+	display: flex;
+	gap: 10px;
+}
+
+.kha-comparison-product-thumb {
+	position: relative;
+	width: 60px;
+	height: 60px;
 	background: white;
 	border-radius: 8px;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.kha-comparison-product-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.kha-comparison-product-thumb.kha-empty-slot {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(255, 255, 255, 0.2);
+	border: 2px dashed rgba(255, 255, 255, 0.5);
+	font-size: 24px;
+	color: white;
+}
+
+.kha-comparison-product-remove {
+	position: absolute;
+	top: 2px;
+	right: 2px;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background: #dc3232;
+	color: white;
+	border: none;
+	cursor: pointer;
+	font-size: 14px;
+	line-height: 1;
+	padding: 0;
+	display: none;
+}
+
+.kha-comparison-product-thumb:hover .kha-comparison-product-remove {
+	display: block;
+}
+
+.kha-comparison-bar-right {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+.kha-comparison-clear-btn {
+	width: 40px;
+	height: 40px;
+	border-radius: 8px;
+	background: rgba(255, 255, 255, 0.2);
+	border: none;
+	color: white;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.3s;
+}
+
+.kha-comparison-clear-btn:hover {
+	background: rgba(255, 255, 255, 0.3);
+}
+
+.kha-comparison-clear-btn .dashicons {
+	font-size: 20px;
+	width: 20px;
+	height: 20px;
+}
+
+.kha-comparison-view-btn {
+	padding: 10px 24px;
+	background: white;
+	color: #0073aa;
+	border-radius: 8px;
+	font-weight: 700;
+	text-decoration: none;
+	transition: all 0.3s;
+	white-space: nowrap;
+}
+
+.kha-comparison-view-btn:hover {
+	background: #f0f0f0;
+	text-decoration: none;
+	transform: translateX(4px);
+}
+
+/* ==========================================================================
+   Comparison Page
+   ========================================================================== */
+
+.kha-comparison-page {
+	padding: 40px 0;
+	background: #f9f9f9;
+	min-height: 80vh;
+}
+
+.kha-comparison-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 30px;
+	padding-bottom: 20px;
+	border-bottom: 2px solid #e0e0e0;
+}
+
+.kha-comparison-header h1 {
+	margin: 0;
+	font-size: 32px;
+	color: #333;
+}
+
+.kha-comparison-actions {
+	display: flex;
+	gap: 12px;
+}
+
+.kha-comparison-print,
+.kha-comparison-share,
+.kha-comparison-clear-all {
+	padding: 10px 20px;
+	border: 1px solid #ddd;
+	background: white;
+	border-radius: 6px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 600;
+	transition: all 0.3s;
+}
+
+.kha-comparison-print:hover {
+	background: #0073aa;
+	color: white;
+	border-color: #0073aa;
+}
+
+.kha-comparison-share:hover {
+	background: #46b450;
+	color: white;
+	border-color: #46b450;
+}
+
+.kha-comparison-clear-all:hover {
+	background: #dc3232;
+	color: white;
+	border-color: #dc3232;
+}
+
+/* Empty State */
+.kha-comparison-empty {
+	text-align: center;
+	padding: 100px 20px;
+	background: white;
+	border-radius: 12px;
+}
+
+.kha-comparison-empty-icon {
+	font-size: 100px;
+	margin-bottom: 24px;
+}
+
+.kha-comparison-empty h2 {
+	font-size: 28px;
+	margin-bottom: 12px;
+	color: #333;
+}
+
+.kha-comparison-empty p {
+	font-size: 16px;
+	color: #666;
+	margin-bottom: 30px;
+}
+
+.kha-back-to-shop {
+	display: inline-block;
+	padding: 12px 32px;
+	background: #0073aa;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-weight: 700;
+	transition: background 0.3s;
+}
+
+.kha-back-to-shop:hover {
+	background: #005a87;
+	text-decoration: none;
+}
+
+/* Comparison Table */
+.kha-comparison-table-wrapper {
 	overflow-x: auto;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
 .kha-comparison-table {
 	width: 100%;
 	border-collapse: collapse;
-	min-width: 800px;
-}
-
-.kha-comparison-table th,
-.kha-comparison-table td {
-	padding: 20px;
-	text-align: center;
-	border: 1px solid #f0f0f0;
+	min-width: 600px;
 }
 
 .kha-comparison-table thead th {
-	background: #f5f5f5;
-	font-weight: 600;
-	color: #333;
+	padding: 0;
+	border: 1px solid #e0e0e0;
+	background: #f9f9f9;
 	position: sticky;
 	top: 0;
 	z-index: 10;
 }
 
-.kha-comparison-table tbody tr:first-child td {
-	background: #fafafa;
-	font-weight: 600;
-	color: #666;
+.kha-comparison-table .kha-spec-label {
+	font-weight: 700;
 	text-align: left;
-	font-size: 14px;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-}
-
-.kha-comparison-product-image {
-	width: 150px;
-	height: 150px;
-	object-fit: cover;
-	border-radius: 8px;
-	margin-bottom: 15px;
-}
-
-.kha-comparison-product-name {
-	font-weight: 700;
-	font-size: 16px;
-	color: #333;
-	margin-bottom: 10px;
-	display: block;
-	text-decoration: none;
-	transition: color 0.2s;
-}
-
-.kha-comparison-product-name:hover {
-	color: #FF9800;
-}
-
-.kha-comparison-price {
-	font-size: 20px;
-	font-weight: 700;
-	color: #FF9800;
-	margin-bottom: 15px;
-}
-
-.kha-comparison-add-to-cart {
-	padding: 10px 20px;
-	background: #FF9800;
+	padding: 15px;
+	background: #0073aa;
 	color: white;
-	border: none;
-	border-radius: 6px;
-	cursor: pointer;
-	font-weight: 600;
-	transition: background 0.2s;
+	min-width: 200px;
+}
+
+.kha-product-column {
+	min-width: 250px;
+	max-width: 350px;
+}
+
+.kha-product-header {
+	padding: 20px;
+	text-align: center;
+}
+
+.kha-product-header img {
 	width: 100%;
+	max-width: 200px;
+	height: 200px;
+	object-fit: contain;
+	margin-bottom: 15px;
+	border-radius: 8px;
 }
 
-.kha-comparison-add-to-cart:hover {
-	background: #F57C00;
-}
-
-.kha-comparison-remove {
-	position: absolute;
-	top: 10px;
-	right: 10px;
-	width: 30px;
-	height: 30px;
-	background: #dc3545;
-	color: white;
-	border: none;
-	border-radius: 50%;
-	cursor: pointer;
+.kha-product-header h3 {
+	margin: 0 0 12px 0;
 	font-size: 18px;
+	color: #333;
+	min-height: 44px;
+}
+
+.kha-product-price {
+	margin-bottom: 15px;
+}
+
+.kha-price-sale {
+	color: #dc3232;
+	font-weight: 700;
+	font-size: 20px;
+}
+
+.kha-price-regular {
+	text-decoration: line-through;
+	color: #999;
+	margin-left: 8px;
+	font-size: 16px;
+}
+
+.kha-price-current {
+	color: #0073aa;
+	font-weight: 700;
+	font-size: 20px;
+}
+
+.kha-product-actions {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+}
+
+.kha-view-product,
+.kha-remove-product {
+	padding: 8px 16px;
+	border-radius: 6px;
+	font-weight: 600;
+	cursor: pointer;
+	font-size: 14px;
+	text-decoration: none;
+	border: none;
+	transition: all 0.3s;
+}
+
+.kha-view-product {
+	background: #0073aa;
+	color: white;
+}
+
+.kha-view-product:hover {
+	background: #005a87;
+	text-decoration: none;
+}
+
+.kha-remove-product {
+	background: #f0f0f0;
+	color: #666;
+}
+
+.kha-remove-product:hover {
+	background: #dc3232;
+	color: white;
+}
+
+/* Table Body */
+.kha-comparison-table tbody tr {
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.kha-comparison-table tbody tr:hover {
+	background: #f9f9f9;
+}
+
+.kha-comparison-table tbody td {
+	padding: 15px;
+	border: 1px solid #e0e0e0;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.kha-section-header td {
+	background: #f0f0f0;
+	font-weight: 700;
+	color: #333;
+	text-align: left;
+	padding: 12px 15px;
+}
+
+.kha-highlight-diff {
+	background: #fff8e5 !important;
+	font-weight: 700;
+	color: #996800;
+}
+
+/* ==========================================================================
+   Share Modal
+   ========================================================================== */
+
+.kha-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 9999;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	transition: background 0.2s;
 }
 
-.kha-comparison-remove:hover {
-	background: #c82333;
-}
-
-.kha-spec-row {
-	font-size: 14px;
-	color: #666;
-}
-
-.kha-spec-row.highlight {
-	background: #fffbea;
-	font-weight: 600;
-	color: #333;
-}
-
-.kha-comparison-empty {
-	background: white;
-	padding: 60px 20px;
-	text-align: center;
-	border-radius: 8px;
-}
-
-.kha-comparison-empty-icon {
-	font-size: 64px;
-	color: #ddd;
-	margin-bottom: 20px;
-}
-
-.kha-comparison-empty h3 {
-	margin-bottom: 10px;
-	color: #666;
-}
-
-.kha-comparison-empty p {
-	color: #999;
-	margin-bottom: 30px;
-}
-
-.kha-add-products-btn {
-	display: inline-block;
-	padding: 12px 30px;
-	background: #FF9800;
-	color: white;
-	text-decoration: none;
-	border-radius: 6px;
-	font-weight: 600;
-	transition: background 0.2s;
-}
-
-.kha-add-products-btn:hover {
-	background: #F57C00;
-}
-
-.kha-comparison-add-button {
-	position: relative;
-}
-
-.kha-compare-checkbox {
+.kha-modal-overlay {
 	position: absolute;
-	top: 10px;
-	right: 10px;
-	width: 24px;
-	height: 24px;
-	cursor: pointer;
-	z-index: 5;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.7);
 }
 
-.kha-comparison-counter {
-	position: fixed;
-	bottom: 30px;
-	right: 30px;
-	background: #FF9800;
-	color: white;
-	padding: 15px 25px;
-	border-radius: 50px;
-	box-shadow: 0 4px 16px rgba(255, 152, 0, 0.4);
-	z-index: 1000;
-	display: none;
-	align-items: center;
-	gap: 15px;
-}
-
-.kha-comparison-counter.active {
-	display: flex;
-}
-
-.kha-comparison-count {
-	font-weight: 700;
-	font-size: 18px;
-}
-
-.kha-view-comparison-btn {
-	padding: 8px 16px;
+.kha-modal-content {
+	position: relative;
 	background: white;
-	color: #FF9800;
+	border-radius: 12px;
+	max-width: 500px;
+	width: 90%;
+	max-height: 90vh;
+	overflow-y: auto;
+	animation: khaModalSlideIn 0.3s ease;
+}
+
+@keyframes khaModalSlideIn {
+	from {
+		opacity: 0;
+		transform: translateY(-50px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.kha-modal-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 20px 24px;
+	border-bottom: 1px solid #e0e0e0;
+}
+
+.kha-modal-header h3 {
+	margin: 0;
+	font-size: 20px;
+}
+
+.kha-modal-close {
+	width: 32px;
+	height: 32px;
 	border: none;
-	border-radius: 20px;
-	font-weight: 600;
+	background: #f0f0f0;
+	border-radius: 50%;
 	cursor: pointer;
-	transition: transform 0.2s;
+	font-size: 24px;
+	line-height: 1;
+	color: #666;
 }
 
-.kha-view-comparison-btn:hover {
-	transform: scale(1.05);
+.kha-modal-close:hover {
+	background: #dc3232;
+	color: white;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-	.kha-comparison-header {
-		flex-direction: column;
-		gap: 15px;
+.kha-modal-body {
+	padding: 24px;
+}
+
+.kha-share-url-wrapper {
+	display: flex;
+	gap: 10px;
+	margin: 15px 0 20px 0;
+}
+
+.kha-share-url-wrapper input {
+	flex: 1;
+	padding: 10px 15px;
+	border: 1px solid #ddd;
+	border-radius: 6px;
+	font-size: 14px;
+}
+
+.kha-copy-url {
+	padding: 10px 20px;
+	background: #0073aa;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 600;
+}
+
+.kha-copy-url:hover {
+	background: #005a87;
+}
+
+.kha-share-socials {
+	display: flex;
+	gap: 12px;
+	margin-top: 20px;
+}
+
+.kha-share-facebook,
+.kha-share-zalo {
+	flex: 1;
+	padding: 12px;
+	border: 1px solid #ddd;
+	background: white;
+	border-radius: 6px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font-weight: 600;
+	transition: all 0.3s;
+}
+
+.kha-share-facebook:hover {
+	background: #1877f2;
+	color: white;
+	border-color: #1877f2;
+}
+
+.kha-share-zalo:hover {
+	background: #0068ff;
+	color: white;
+	border-color: #0068ff;
+}
+
+/* ==========================================================================
+   Toast Notifications
+   ========================================================================== */
+
+.kha-toast {
+	position: fixed;
+	bottom: 100px;
+	right: -300px;
+	padding: 15px 24px;
+	background: #333;
+	color: white;
+	border-radius: 8px;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+	z-index: 10000;
+	transition: right 0.3s ease;
+	font-weight: 600;
+}
+
+.kha-toast.kha-toast-show {
+	right: 20px;
+}
+
+.kha-toast.kha-toast-success {
+	background: #46b450;
+}
+
+.kha-toast.kha-toast-warning {
+	background: #ffb900;
+	color: #000;
+}
+
+.kha-toast.kha-toast-info {
+	background: #0073aa;
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+	.kha-comparison-header,
+	.kha-comparison-bar,
+	.kha-product-actions,
+	.kha-remove-product {
+		display: none !important;
+	}
+
+	.kha-comparison-table {
+		page-break-inside: avoid;
+	}
+}
+
+/* ==========================================================================
+   Mobile Responsive
+   ========================================================================== */
+
+@media screen and (max-width: 768px) {
+	.kha-comparison-bar-inner {
+		flex-wrap: wrap;
+		padding: 12px 15px;
+	}
+
+	.kha-comparison-bar-left {
+		order: 1;
+		width: 100%;
+		margin-bottom: 10px;
+	}
+
+	.kha-comparison-bar-center {
+		order: 3;
+		width: 100%;
+	}
+
+	.kha-comparison-bar-right {
+		order: 2;
+		width: 100%;
+		justify-content: space-between;
+	}
+
+	.kha-comparison-view-btn {
+		flex: 1;
 		text-align: center;
 	}
 
-	.kha-comparison-header h2 {
-		font-size: 20px;
+	.kha-comparison-header {
+		flex-direction: column;
+		gap: 15px;
+		align-items: flex-start;
 	}
 
-	.kha-comparison-table th,
-	.kha-comparison-table td {
-		padding: 15px 10px;
-		font-size: 13px;
+	.kha-comparison-header h1 {
+		font-size: 24px;
 	}
 
-	.kha-comparison-product-image {
-		width: 100px;
-		height: 100px;
+	.kha-comparison-actions {
+		width: 100%;
+		flex-wrap: wrap;
 	}
 
-	.kha-comparison-counter {
-		bottom: 15px;
-		right: 15px;
-		padding: 12px 20px;
+	.kha-comparison-actions button {
+		flex: 1;
+		min-width: 120px;
+		justify-content: center;
+	}
+
+	.kha-comparison-table-wrapper {
+		margin: 0 -20px;
+		border-radius: 0;
+	}
+
+	.kha-product-column {
+		min-width: 200px;
+	}
+
+	.kha-product-header img {
+		max-width: 150px;
+		height: 150px;
+	}
+
+	.kha-product-header h3 {
+		font-size: 16px;
+	}
+
+	.kha-share-socials {
+		flex-direction: column;
 	}
 }

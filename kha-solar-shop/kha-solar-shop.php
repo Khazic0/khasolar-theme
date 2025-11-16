@@ -155,6 +155,12 @@ function kha_solar_init() {
 		$calculator->init();
 	}
 
+	// Initialize comparison.
+	if ( class_exists( 'KhaSolar\Comparison' ) ) {
+		$comparison = new KhaSolar\Comparison();
+		$comparison->init();
+	}
+
 	// Initialize admin functionality.
 	if ( is_admin() ) {
 		if ( class_exists( 'KhaSolar\Product_Meta_Boxes' ) ) {
