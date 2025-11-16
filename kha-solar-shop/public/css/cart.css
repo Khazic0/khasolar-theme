@@ -1,0 +1,221 @@
+/**
+ * Kha Solar Shop - Cart Styles
+ *
+ * @package KhaSolar
+ * @since   1.0.0
+ */
+
+.kha-cart-wrapper {
+	max-width: 1200px;
+	margin: 40px auto;
+	padding: 0 20px;
+}
+
+.kha-cart-table {
+	width: 100%;
+	background: white;
+	border-radius: 8px;
+	overflow: hidden;
+	margin-bottom: 30px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.kha-cart-table table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.kha-cart-table th {
+	background: #f5f5f5;
+	padding: 15px 20px;
+	text-align: left;
+	font-weight: 600;
+	color: #333;
+	border-bottom: 2px solid #e0e0e0;
+}
+
+.kha-cart-table td {
+	padding: 20px;
+	border-bottom: 1px solid #f0f0f0;
+	vertical-align: middle;
+}
+
+.kha-cart-item-image {
+	width: 80px;
+	height: 80px;
+	object-fit: cover;
+	border-radius: 6px;
+}
+
+.kha-cart-item-name {
+	font-weight: 600;
+	color: #333;
+	text-decoration: none;
+	display: block;
+	margin-bottom: 5px;
+}
+
+.kha-cart-item-name:hover {
+	color: #FF9800;
+}
+
+.kha-cart-quantity {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	max-width: 120px;
+}
+
+.kha-qty-btn {
+	width: 32px;
+	height: 32px;
+	border: 1px solid #ddd;
+	background: white;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all 0.2s;
+}
+
+.kha-qty-btn:hover {
+	background: #f5f5f5;
+	border-color: #ccc;
+}
+
+.kha-qty-input {
+	width: 50px;
+	text-align: center;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 6px;
+	font-size: 14px;
+}
+
+.kha-cart-remove {
+	background: #dc3545;
+	color: white;
+	border: none;
+	padding: 8px 16px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 14px;
+	transition: background 0.2s;
+}
+
+.kha-cart-remove:hover {
+	background: #c82333;
+}
+
+.kha-cart-summary {
+	background: white;
+	padding: 30px;
+	border-radius: 8px;
+	max-width: 400px;
+	margin-left: auto;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.kha-cart-summary h3 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	font-size: 20px;
+}
+
+.kha-summary-row {
+	display: flex;
+	justify-content: space-between;
+	padding: 12px 0;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.kha-summary-row.total {
+	border-bottom: none;
+	border-top: 2px solid #e0e0e0;
+	font-size: 18px;
+	font-weight: 700;
+	color: #FF9800;
+	margin-top: 10px;
+	padding-top: 15px;
+}
+
+.kha-checkout-btn {
+	width: 100%;
+	padding: 15px;
+	background: #FF9800;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	font-size: 16px;
+	font-weight: 600;
+	cursor: pointer;
+	margin-top: 20px;
+	transition: background 0.2s;
+}
+
+.kha-checkout-btn:hover {
+	background: #F57C00;
+}
+
+.kha-empty-cart {
+	text-align: center;
+	padding: 60px 20px;
+	background: white;
+	border-radius: 8px;
+}
+
+.kha-empty-cart-icon {
+	font-size: 64px;
+	color: #ddd;
+	margin-bottom: 20px;
+}
+
+.kha-empty-cart h2 {
+	margin-bottom: 10px;
+	color: #666;
+}
+
+.kha-empty-cart p {
+	color: #999;
+	margin-bottom: 30px;
+}
+
+.kha-continue-shopping {
+	display: inline-block;
+	padding: 12px 30px;
+	background: #FF9800;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-weight: 600;
+	transition: background 0.2s;
+}
+
+.kha-continue-shopping:hover {
+	background: #F57C00;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.kha-cart-table {
+		overflow-x: auto;
+	}
+
+	.kha-cart-table th,
+	.kha-cart-table td {
+		padding: 10px;
+		font-size: 14px;
+	}
+
+	.kha-cart-item-image {
+		width: 60px;
+		height: 60px;
+	}
+
+	.kha-cart-summary {
+		max-width: 100%;
+		margin-top: 20px;
+	}
+}

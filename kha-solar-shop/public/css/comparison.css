@@ -1,0 +1,281 @@
+/**
+ * Kha Solar Shop - Product Comparison Styles
+ *
+ * @package KhaSolar
+ * @since   1.0.0
+ */
+
+.kha-comparison-wrapper {
+	max-width: 1400px;
+	margin: 40px auto;
+	padding: 0 20px;
+}
+
+.kha-comparison-header {
+	background: white;
+	padding: 20px 30px;
+	border-radius: 8px;
+	margin-bottom: 30px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.kha-comparison-header h2 {
+	margin: 0;
+	font-size: 24px;
+}
+
+.kha-clear-comparison {
+	padding: 10px 20px;
+	background: #dc3545;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: background 0.2s;
+}
+
+.kha-clear-comparison:hover {
+	background: #c82333;
+}
+
+.kha-comparison-table-wrapper {
+	background: white;
+	border-radius: 8px;
+	overflow-x: auto;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.kha-comparison-table {
+	width: 100%;
+	border-collapse: collapse;
+	min-width: 800px;
+}
+
+.kha-comparison-table th,
+.kha-comparison-table td {
+	padding: 20px;
+	text-align: center;
+	border: 1px solid #f0f0f0;
+}
+
+.kha-comparison-table thead th {
+	background: #f5f5f5;
+	font-weight: 600;
+	color: #333;
+	position: sticky;
+	top: 0;
+	z-index: 10;
+}
+
+.kha-comparison-table tbody tr:first-child td {
+	background: #fafafa;
+	font-weight: 600;
+	color: #666;
+	text-align: left;
+	font-size: 14px;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+}
+
+.kha-comparison-product-image {
+	width: 150px;
+	height: 150px;
+	object-fit: cover;
+	border-radius: 8px;
+	margin-bottom: 15px;
+}
+
+.kha-comparison-product-name {
+	font-weight: 700;
+	font-size: 16px;
+	color: #333;
+	margin-bottom: 10px;
+	display: block;
+	text-decoration: none;
+	transition: color 0.2s;
+}
+
+.kha-comparison-product-name:hover {
+	color: #FF9800;
+}
+
+.kha-comparison-price {
+	font-size: 20px;
+	font-weight: 700;
+	color: #FF9800;
+	margin-bottom: 15px;
+}
+
+.kha-comparison-add-to-cart {
+	padding: 10px 20px;
+	background: #FF9800;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: background 0.2s;
+	width: 100%;
+}
+
+.kha-comparison-add-to-cart:hover {
+	background: #F57C00;
+}
+
+.kha-comparison-remove {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	background: #dc3545;
+	color: white;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	font-size: 18px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: background 0.2s;
+}
+
+.kha-comparison-remove:hover {
+	background: #c82333;
+}
+
+.kha-spec-row {
+	font-size: 14px;
+	color: #666;
+}
+
+.kha-spec-row.highlight {
+	background: #fffbea;
+	font-weight: 600;
+	color: #333;
+}
+
+.kha-comparison-empty {
+	background: white;
+	padding: 60px 20px;
+	text-align: center;
+	border-radius: 8px;
+}
+
+.kha-comparison-empty-icon {
+	font-size: 64px;
+	color: #ddd;
+	margin-bottom: 20px;
+}
+
+.kha-comparison-empty h3 {
+	margin-bottom: 10px;
+	color: #666;
+}
+
+.kha-comparison-empty p {
+	color: #999;
+	margin-bottom: 30px;
+}
+
+.kha-add-products-btn {
+	display: inline-block;
+	padding: 12px 30px;
+	background: #FF9800;
+	color: white;
+	text-decoration: none;
+	border-radius: 6px;
+	font-weight: 600;
+	transition: background 0.2s;
+}
+
+.kha-add-products-btn:hover {
+	background: #F57C00;
+}
+
+.kha-comparison-add-button {
+	position: relative;
+}
+
+.kha-compare-checkbox {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 24px;
+	height: 24px;
+	cursor: pointer;
+	z-index: 5;
+}
+
+.kha-comparison-counter {
+	position: fixed;
+	bottom: 30px;
+	right: 30px;
+	background: #FF9800;
+	color: white;
+	padding: 15px 25px;
+	border-radius: 50px;
+	box-shadow: 0 4px 16px rgba(255, 152, 0, 0.4);
+	z-index: 1000;
+	display: none;
+	align-items: center;
+	gap: 15px;
+}
+
+.kha-comparison-counter.active {
+	display: flex;
+}
+
+.kha-comparison-count {
+	font-weight: 700;
+	font-size: 18px;
+}
+
+.kha-view-comparison-btn {
+	padding: 8px 16px;
+	background: white;
+	color: #FF9800;
+	border: none;
+	border-radius: 20px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: transform 0.2s;
+}
+
+.kha-view-comparison-btn:hover {
+	transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.kha-comparison-header {
+		flex-direction: column;
+		gap: 15px;
+		text-align: center;
+	}
+
+	.kha-comparison-header h2 {
+		font-size: 20px;
+	}
+
+	.kha-comparison-table th,
+	.kha-comparison-table td {
+		padding: 15px 10px;
+		font-size: 13px;
+	}
+
+	.kha-comparison-product-image {
+		width: 100px;
+		height: 100px;
+	}
+
+	.kha-comparison-counter {
+		bottom: 15px;
+		right: 15px;
+		padding: 12px 20px;
+	}
+}
