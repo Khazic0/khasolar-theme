@@ -85,6 +85,11 @@ spl_autoload_register( 'kha_solar_autoloader' );
 require_once KHA_PLUGIN_DIR . 'includes/product-functions.php';
 
 /**
+ * Load chat bubble widget.
+ */
+require_once KHA_PLUGIN_DIR . 'widgets/class-chat-bubble.php';
+
+/**
  * The code that runs during plugin activation.
  */
 function activate_kha_solar_shop() {

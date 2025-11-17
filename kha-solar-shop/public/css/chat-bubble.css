@@ -1,0 +1,457 @@
+/**
+ * Chat Bubble Styles
+ *
+ * Floating chat buttons for Zalo, Messenger, and Phone support.
+ *
+ * @package KhaSolar
+ * @since   1.0.0
+ */
+
+/* ==========================================================================
+   Chat Bubble Container
+   ========================================================================== */
+
+.kha-chat-bubble {
+	position: fixed;
+	z-index: 9999;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+/* Position: Bottom Right (default) */
+.kha-chat-bubble.kha-position-bottom-right {
+	bottom: 24px;
+	right: 24px;
+}
+
+/* Position: Bottom Left */
+.kha-chat-bubble.kha-position-bottom-left {
+	bottom: 24px;
+	left: 24px;
+}
+
+/* ==========================================================================
+   Chat Buttons
+   ========================================================================== */
+
+.kha-chat-buttons {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	align-items: center;
+}
+
+.kha-chat-button {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 200ms ease;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+	border: none;
+	text-decoration: none;
+	position: relative;
+}
+
+.kha-chat-button:hover {
+	transform: scale(1.1);
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.kha-chat-button:focus {
+	outline: 2px solid #333;
+	outline-offset: 2px;
+}
+
+.kha-chat-button svg {
+	width: 28px;
+	height: 28px;
+	display: block;
+}
+
+/* Zalo Button - Blue */
+.kha-chat-zalo {
+	background-color: #0068FF;
+}
+
+.kha-chat-zalo:hover {
+	background-color: #0056CC;
+}
+
+/* Messenger Button - Gradient Blue */
+.kha-chat-messenger {
+	background: linear-gradient(135deg, #0084FF 0%, #0066CC 100%);
+}
+
+.kha-chat-messenger:hover {
+	background: linear-gradient(135deg, #006DD9 0%, #0052A3 100%);
+}
+
+/* Phone Button - Green */
+.kha-chat-phone {
+	background-color: #25D366;
+}
+
+.kha-chat-phone:hover {
+	background-color: #1EBE57;
+}
+
+/* ==========================================================================
+   Greeting Bubble
+   ========================================================================== */
+
+.kha-greeting-bubble {
+	position: absolute;
+	bottom: 100%;
+	margin-bottom: 16px;
+	background: #fff;
+	border-radius: 16px;
+	padding: 16px 20px;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+	max-width: 280px;
+	animation: kha-slide-up 0.4s ease;
+}
+
+.kha-position-bottom-right .kha-greeting-bubble {
+	right: 0;
+}
+
+.kha-position-bottom-left .kha-greeting-bubble {
+	left: 0;
+}
+
+.kha-greeting-bubble::after {
+	content: '';
+	position: absolute;
+	top: 100%;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 12px 12px 0 12px;
+	border-color: #fff transparent transparent transparent;
+}
+
+.kha-position-bottom-right .kha-greeting-bubble::after {
+	right: 16px;
+}
+
+.kha-position-bottom-left .kha-greeting-bubble::after {
+	left: 16px;
+}
+
+.kha-greeting-content {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.kha-greeting-emoji {
+	font-size: 24px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+.kha-greeting-content p {
+	margin: 0;
+	font-size: 14px;
+	line-height: 1.5;
+	color: #333;
+}
+
+.kha-greeting-close {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	width: 24px;
+	height: 24px;
+	border: none;
+	background: transparent;
+	font-size: 20px;
+	line-height: 1;
+	color: #999;
+	cursor: pointer;
+	border-radius: 50%;
+	transition: all 200ms ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+}
+
+.kha-greeting-close:hover {
+	background: #f5f5f5;
+	color: #333;
+}
+
+/* ==========================================================================
+   Phone Modal (Desktop)
+   ========================================================================== */
+
+.kha-phone-modal {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10000;
+	align-items: center;
+	justify-content: center;
+}
+
+.kha-phone-modal-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.5);
+	cursor: pointer;
+}
+
+.kha-phone-modal-content {
+	position: relative;
+	background: #fff;
+	border-radius: 16px;
+	padding: 32px;
+	box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+	max-width: 400px;
+	width: 90%;
+	animation: kha-modal-appear 0.3s ease;
+}
+
+.kha-phone-modal-close {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	width: 32px;
+	height: 32px;
+	border: none;
+	background: transparent;
+	font-size: 24px;
+	line-height: 1;
+	color: #999;
+	cursor: pointer;
+	border-radius: 50%;
+	transition: all 200ms ease;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+}
+
+.kha-phone-modal-close:hover {
+	background: #f5f5f5;
+	color: #333;
+}
+
+.kha-phone-modal-body {
+	text-align: center;
+}
+
+.kha-phone-icon {
+	font-size: 48px;
+	margin-bottom: 16px;
+}
+
+.kha-phone-modal-body h3 {
+	margin: 0 0 16px;
+	font-size: 20px;
+	color: #333;
+}
+
+.kha-phone-number {
+	font-size: 28px;
+	font-weight: bold;
+	color: #25D366;
+	margin-bottom: 12px;
+	letter-spacing: 1px;
+}
+
+.kha-phone-modal-body p {
+	margin: 0;
+	font-size: 14px;
+	color: #666;
+}
+
+body.kha-modal-open {
+	overflow: hidden;
+}
+
+/* ==========================================================================
+   Animations
+   ========================================================================== */
+
+/* Pulse Animation */
+@keyframes kha-pulse {
+	0%, 100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.05);
+	}
+}
+
+.kha-chat-button.kha-anim-pulse {
+	animation: kha-pulse 2s ease-in-out infinite;
+}
+
+.kha-chat-button.kha-anim-pulse:hover {
+	animation: none;
+}
+
+/* Bounce Animation */
+@keyframes kha-bounce {
+	0%, 100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-8px);
+	}
+}
+
+.kha-chat-button.kha-anim-bounce {
+	animation: kha-bounce 2s ease-in-out infinite;
+}
+
+.kha-chat-button.kha-anim-bounce:hover {
+	animation: none;
+	transform: scale(1.1);
+}
+
+/* Slide Up Animation (Greeting) */
+@keyframes kha-slide-up {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Modal Appear Animation */
+@keyframes kha-modal-appear {
+	from {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+/* ==========================================================================
+   Mobile Responsive
+   ========================================================================== */
+
+@media (max-width: 768px) {
+	.kha-chat-bubble.kha-position-bottom-right {
+		bottom: 16px;
+		right: 16px;
+	}
+
+	.kha-chat-bubble.kha-position-bottom-left {
+		bottom: 16px;
+		left: 16px;
+	}
+
+	.kha-chat-button {
+		width: 48px;
+		height: 48px;
+	}
+
+	.kha-chat-button svg {
+		width: 24px;
+		height: 24px;
+	}
+
+	.kha-greeting-bubble {
+		max-width: 240px;
+		padding: 12px 16px;
+		font-size: 13px;
+	}
+
+	.kha-greeting-emoji {
+		font-size: 20px;
+	}
+
+	.kha-greeting-content p {
+		font-size: 13px;
+	}
+
+	.kha-phone-modal-content {
+		padding: 24px;
+	}
+
+	.kha-phone-number {
+		font-size: 24px;
+	}
+}
+
+/* ==========================================================================
+   Accessibility
+   ========================================================================== */
+
+.kha-chat-button:focus-visible {
+	outline: 2px solid #333;
+	outline-offset: 2px;
+}
+
+.kha-greeting-close:focus-visible,
+.kha-phone-modal-close:focus-visible {
+	outline: 2px solid #333;
+	outline-offset: 2px;
+}
+
+/* Screen reader only text */
+.kha-sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border-width: 0;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+	.kha-chat-button,
+	.kha-greeting-close,
+	.kha-phone-modal-close {
+		transition: none;
+	}
+
+	.kha-chat-button.kha-anim-pulse,
+	.kha-chat-button.kha-anim-bounce {
+		animation: none;
+	}
+
+	.kha-greeting-bubble {
+		animation: none;
+	}
+
+	.kha-phone-modal-content {
+		animation: none;
+	}
+}
+
+/* ==========================================================================
+   Print Styles
+   ========================================================================== */
+
+@media print {
+	.kha-chat-bubble,
+	.kha-phone-modal {
+		display: none !important;
+	}
+}
