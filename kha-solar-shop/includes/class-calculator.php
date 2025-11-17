@@ -1,6 +1,8 @@
 <?php
 /**
- * Solar system calculator functionality.
+ * Solar System Calculator Class
+ *
+ * Interactive calculator to help customers determine their solar system needs.
  *
  * @package KhaSolar
  * @since   1.0.0
@@ -8,194 +10,351 @@
 
 namespace KhaSolar;
 
-// If this file is called directly, abort.
-if ( ! defined( 'WPINC' ) ) {
-	die;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
 /**
  * Calculator class.
- *
- * Handles solar system size calculations.
  */
 class Calculator {
 
 	/**
-	 * Initialize the class.
+	 * Average electricity rate in Vietnam (VND per kWh).
 	 *
-	 * @since 1.0.0
+	 * @var int
+	 */
+	private $electricity_rate = 2500;
+
+	/**
+	 * Average sun hours per day in Vietnam.
+	 *
+	 * @var float
+	 */
+	private $sun_hours = 4.5;
+
+	/**
+	 * System efficiency factor.
+	 *
+	 * @var float
+	 */
+	private $system_efficiency = 0.8;
+
+	/**
+	 * Panel area per kW (m²).
+	 *
+	 * @var int
+	 */
+	private $panel_area_per_kw = 7;
+
+	/**
+	 * Average cost per kW (VND).
+	 *
+	 * @var int
+	 */
+	private $cost_per_kw = 20000000;
+
+	/**
+	 * System lifespan in years.
+	 *
+	 * @var int
+	 */
+	private $system_lifespan = 25;
+
+	/**
+	 * Initialize hooks.
 	 */
 	public function init() {
-		add_shortcode( 'kha_solar_calculator', array( $this, 'calculator_shortcode' ) );
+		add_shortcode( 'kha_calculator', array( $this, 'calculator_shortcode' ) );
 	}
 
 	/**
-	 * Calculate solar system requirements.
+	 * Calculate solar system requirements from monthly bill.
 	 *
-	 * @param float $daily_usage      Daily energy usage in kWh.
-	 * @param float $sunlight_hours   Average daily sunlight hours (optional).
-	 * @param float $system_efficiency System efficiency (optional).
-	 * @return array
-	 * @since 1.0.0
+	 * @param int    $monthly_bill  Monthly electricity bill in VND.
+	 * @param int    $roof_area     Available roof area in m².
+	 * @param bool   $with_battery  Include battery storage.
+	 * @return array Calculation results.
 	 */
-	public function calculate( $daily_usage, $sunlight_hours = null, $system_efficiency = null ) {
-		// Get default values from settings if not provided.
-		if ( null === $sunlight_hours ) {
-			$sunlight_hours = floatval( get_option( 'kha_solar_avg_sunlight_hours', 4.5 ) );
+	public function calculate_system_size( $monthly_bill, $roof_area, $with_battery = false ) {
+		// Convert monthly bill to kWh consumption.
+		$consumption_kwh_monthly = $monthly_bill / $this->electricity_rate;
+		$consumption_kwh_daily   = $consumption_kwh_monthly / 30;
+
+		// Calculate recommended system size (kW).
+		$recommended_system_kw = ( $consumption_kwh_daily / $this->sun_hours ) / $this->system_efficiency;
+
+		// Round up to nearest 0.5 kW.
+		$recommended_system_kw = ceil( $recommended_system_kw * 2 ) / 2;
+
+		// Calculate panel area needed.
+		$panel_area_needed = $recommended_system_kw * $this->panel_area_per_kw;
+
+		// Check if roof area is sufficient.
+		$area_sufficient = $panel_area_needed <= $roof_area;
+
+		// If not enough space, adjust system size.
+		if ( ! $area_sufficient ) {
+			$recommended_system_kw = floor( ( $roof_area / $this->panel_area_per_kw ) * 2 ) / 2;
+			$panel_area_needed     = $recommended_system_kw * $this->panel_area_per_kw;
 		}
 
-		if ( null === $system_efficiency ) {
-			$system_efficiency = floatval( get_option( 'kha_solar_system_efficiency', 0.8 ) );
+		// Calculate estimated investment.
+		$estimated_investment = $recommended_system_kw * $this->cost_per_kw;
+
+		// Add battery cost if requested (approximately 50% extra).
+		if ( $with_battery ) {
+			$estimated_investment *= 1.5;
 		}
 
-		// Ensure valid values.
-		$daily_usage       = floatval( $daily_usage );
-		$sunlight_hours    = floatval( $sunlight_hours );
-		$system_efficiency = floatval( $system_efficiency );
+		// Calculate monthly savings.
+		$actual_production_kwh_daily   = $recommended_system_kw * $this->sun_hours * $this->system_efficiency;
+		$actual_production_kwh_monthly = $actual_production_kwh_daily * 30;
 
-		if ( $daily_usage <= 0 || $sunlight_hours <= 0 || $system_efficiency <= 0 ) {
-			return array(
-				'error' => __( 'Invalid input values.', 'kha-solar' ),
-			);
-		}
+		// Savings limited by consumption.
+		$savings_kwh_monthly = min( $actual_production_kwh_monthly, $consumption_kwh_monthly );
+		$monthly_savings     = $savings_kwh_monthly * $this->electricity_rate;
 
-		// Calculate required system size in kW.
-		// Formula: (Daily Usage / Sunlight Hours / System Efficiency).
-		$system_size_kw = $daily_usage / $sunlight_hours / $system_efficiency;
-
-		// Convert to Watts.
-		$system_size_w = $system_size_kw * 1000;
-
-		// Calculate number of panels (assuming 450W panels).
-		$panel_wattage = 450;
-		$panel_count   = ceil( $system_size_w / $panel_wattage );
-
-		// Calculate actual system size based on panel count.
-		$actual_system_size_kw = ( $panel_count * $panel_wattage ) / 1000;
-
-		// Calculate estimated monthly production.
-		$monthly_production = $actual_system_size_kw * $sunlight_hours * 30 * $system_efficiency;
-
-		// Calculate estimated monthly savings (assuming 3000 VND per kWh).
-		$electricity_rate = floatval( get_option( 'kha_solar_electricity_rate', 3000 ) );
-		$monthly_savings  = $monthly_production * $electricity_rate;
-
-		// Calculate estimated annual savings.
+		// Calculate ROI.
 		$annual_savings = $monthly_savings * 12;
+		$roi_years      = $annual_savings > 0 ? $estimated_investment / $annual_savings : 0;
 
-		// Recommended products based on system size.
-		$recommended_products = $this->get_recommended_products( $actual_system_size_kw );
+		// Calculate total savings over system lifespan.
+		$total_savings_lifetime = $annual_savings * $this->system_lifespan;
+
+		// Get product recommendations.
+		$recommended_products = $this->get_product_recommendations( $recommended_system_kw, $with_battery );
 
 		return array(
-			'daily_usage'            => $daily_usage,
-			'system_size_kw'         => round( $system_size_kw, 2 ),
-			'actual_system_size_kw'  => round( $actual_system_size_kw, 2 ),
-			'panel_count'            => $panel_count,
-			'panel_wattage'          => $panel_wattage,
-			'monthly_production'     => round( $monthly_production, 2 ),
-			'monthly_savings'        => round( $monthly_savings, 0 ),
-			'annual_savings'         => round( $annual_savings, 0 ),
-			'sunlight_hours'         => $sunlight_hours,
-			'system_efficiency'      => $system_efficiency,
-			'recommended_products'   => $recommended_products,
+			'consumption_kwh_monthly' => round( $consumption_kwh_monthly, 1 ),
+			'consumption_kwh_daily'   => round( $consumption_kwh_daily, 1 ),
+			'recommended_system_kw'   => round( $recommended_system_kw, 1 ),
+			'panel_area_needed'       => round( $panel_area_needed, 0 ),
+			'area_sufficient'         => $area_sufficient,
+			'estimated_investment'    => round( $estimated_investment, -6 ), // Round to millions.
+			'monthly_savings'         => round( $monthly_savings, -3 ), // Round to thousands.
+			'annual_savings'          => round( $annual_savings, -3 ),
+			'roi_years'               => round( $roi_years, 1 ),
+			'total_savings_lifetime'  => round( $total_savings_lifetime, -6 ),
+			'system_lifespan'         => $this->system_lifespan,
+			'recommended_products'    => $recommended_products,
+			'with_battery'            => $with_battery,
 		);
 	}
 
 	/**
-	 * Get recommended products based on system size.
+	 * Get product recommendations based on system size.
 	 *
-	 * @param float $system_size_kw System size in kW.
-	 * @return array
-	 * @since 1.0.0
+	 * @param float $system_kw    System size in kW.
+	 * @param bool  $with_battery Include battery.
+	 * @return array Product recommendations.
 	 */
-	private function get_recommended_products( $system_size_kw ) {
-		// Query products with power capacity meta.
-		$args = array(
-			'post_type'      => 'kha_product',
-			'posts_per_page' => 5,
-			'post_status'    => 'publish',
-			'meta_query'     => array(
-				array(
-					'key'     => '_kha_product_power',
-					'value'   => array( $system_size_kw * 0.8, $system_size_kw * 1.2 ),
-					'type'    => 'NUMERIC',
-					'compare' => 'BETWEEN',
-				),
-			),
+	public function get_product_recommendations( $system_kw, $with_battery = false ) {
+		$recommendations = array(
+			'inverter' => null,
+			'panels'   => null,
+			'battery'  => null,
 		);
 
-		$query = new \WP_Query( $args );
+		// Find suitable inverter.
+		$inverter_args = array(
+			'post_type'      => 'kha_product',
+			'posts_per_page' => 1,
+			'post_status'    => 'publish',
+			'meta_query'     => array(
+				'relation' => 'AND',
+				array(
+					'key'     => '_power',
+					'value'   => $system_kw * 1000, // Convert to W.
+					'type'    => 'NUMERIC',
+					'compare' => '>=',
+				),
+			),
+			'tax_query'      => array(
+				array(
+					'taxonomy' => 'kha_product_cat',
+					'field'    => 'slug',
+					'terms'    => 'inverter',
+				),
+			),
+			'orderby'        => 'meta_value_num',
+			'meta_key'       => '_power',
+			'order'          => 'ASC',
+		);
 
-		$products = array();
+		$inverter_query = new \WP_Query( $inverter_args );
 
-		if ( $query->have_posts() ) {
-			while ( $query->have_posts() ) {
-				$query->the_post();
-
-				$product_id = get_the_ID();
-				$price      = get_post_meta( $product_id, '_kha_product_price', true );
-				$power      = get_post_meta( $product_id, '_kha_product_power', true );
-
-				$products[] = array(
-					'id'    => $product_id,
-					'title' => get_the_title(),
-					'url'   => get_permalink(),
-					'image' => get_the_post_thumbnail_url( $product_id, 'kha-product-thumbnail' ),
-					'price' => $price ? kha_solar_format_price( $price ) : '',
-					'power' => $power,
-				);
-			}
+		if ( $inverter_query->have_posts() ) {
+			$inverter_query->the_post();
+			$recommendations['inverter'] = $this->format_product_data( get_the_ID() );
 			wp_reset_postdata();
 		}
 
-		// If no products found in range, get general solar panel products.
-		if ( empty( $products ) ) {
-			$args = array(
+		// Find suitable solar panels.
+		$panels_args = array(
+			'post_type'      => 'kha_product',
+			'posts_per_page' => 1,
+			'post_status'    => 'publish',
+			'tax_query'      => array(
+				array(
+					'taxonomy' => 'kha_product_cat',
+					'field'    => 'slug',
+					'terms'    => 'solar-panel',
+				),
+			),
+			'orderby'        => 'meta_value_num',
+			'meta_key'       => '_price',
+			'order'          => 'ASC',
+		);
+
+		$panels_query = new \WP_Query( $panels_args );
+
+		if ( $panels_query->have_posts() ) {
+			$panels_query->the_post();
+			$panel_data = $this->format_product_data( get_the_ID() );
+
+			// Calculate number of panels needed.
+			$panel_power = get_post_meta( get_the_ID(), '_power', true );
+			if ( $panel_power ) {
+				$panel_count = ceil( ( $system_kw * 1000 ) / $panel_power );
+				$panel_data['quantity']      = $panel_count;
+				$panel_data['total_price']   = $panel_data['price_raw'] * $panel_count;
+				$panel_data['total_price_formatted'] = kha_solar_format_price( $panel_data['total_price'] );
+			}
+
+			$recommendations['panels'] = $panel_data;
+			wp_reset_postdata();
+		}
+
+		// Find battery if requested.
+		if ( $with_battery ) {
+			$battery_args = array(
 				'post_type'      => 'kha_product',
-				'posts_per_page' => 5,
+				'posts_per_page' => 1,
 				'post_status'    => 'publish',
 				'tax_query'      => array(
 					array(
 						'taxonomy' => 'kha_product_cat',
 						'field'    => 'slug',
-						'terms'    => 'solar-panels',
+						'terms'    => 'battery',
 					),
 				),
+				'orderby'        => 'meta_value_num',
+				'meta_key'       => '_price',
+				'order'          => 'ASC',
 			);
 
-			$query = new \WP_Query( $args );
+			$battery_query = new \WP_Query( $battery_args );
 
-			if ( $query->have_posts() ) {
-				while ( $query->have_posts() ) {
-					$query->the_post();
-
-					$product_id = get_the_ID();
-					$price      = get_post_meta( $product_id, '_kha_product_price', true );
-
-					$products[] = array(
-						'id'    => $product_id,
-						'title' => get_the_title(),
-						'url'   => get_permalink(),
-						'image' => get_the_post_thumbnail_url( $product_id, 'kha-product-thumbnail' ),
-						'price' => $price ? kha_solar_format_price( $price ) : '',
-					);
-				}
+			if ( $battery_query->have_posts() ) {
+				$battery_query->the_post();
+				$recommendations['battery'] = $this->format_product_data( get_the_ID() );
 				wp_reset_postdata();
 			}
 		}
 
-		return $products;
+		return $recommendations;
+	}
+
+	/**
+	 * Format product data for recommendations.
+	 *
+	 * @param int $product_id Product ID.
+	 * @return array Product data.
+	 */
+	private function format_product_data( $product_id ) {
+		$price      = get_post_meta( $product_id, '_price', true );
+		$sale_price = get_post_meta( $product_id, '_sale_price', true );
+		$final_price = $sale_price ? $sale_price : $price;
+
+		return array(
+			'id'              => $product_id,
+			'title'           => get_the_title( $product_id ),
+			'url'             => get_permalink( $product_id ),
+			'image'           => get_the_post_thumbnail_url( $product_id, 'medium' ),
+			'price'           => kha_solar_format_price( $final_price ),
+			'price_raw'       => floatval( $final_price ),
+			'power'           => get_post_meta( $product_id, '_power', true ),
+			'on_sale'         => ! empty( $sale_price ),
+			'quantity'        => 1,
+		);
+	}
+
+	/**
+	 * Calculate bundle total price.
+	 *
+	 * @param array $products Product recommendations.
+	 * @return array Bundle pricing.
+	 */
+	public function calculate_bundle_price( $products ) {
+		$total = 0;
+
+		if ( ! empty( $products['inverter'] ) ) {
+			$total += $products['inverter']['price_raw'];
+		}
+
+		if ( ! empty( $products['panels'] ) ) {
+			$total += $products['panels']['total_price'];
+		}
+
+		if ( ! empty( $products['battery'] ) ) {
+			$total += $products['battery']['price_raw'];
+		}
+
+		$discount_percent = 10; // 10% bundle discount.
+		$discount_amount  = $total * ( $discount_percent / 100 );
+		$bundle_price     = $total - $discount_amount;
+
+		return array(
+			'total_price'      => $total,
+			'discount_percent' => $discount_percent,
+			'discount_amount'  => $discount_amount,
+			'bundle_price'     => $bundle_price,
+			'total_formatted'  => kha_solar_format_price( $total ),
+			'bundle_formatted' => kha_solar_format_price( $bundle_price ),
+		);
+	}
+
+	/**
+	 * Save lead data from calculator.
+	 *
+	 * @param array $lead_data Lead information.
+	 * @return int|WP_Error Lead ID or error.
+	 */
+	public function save_lead( $lead_data ) {
+		// Create lead as custom post type (you may want to create this).
+		$lead_id = wp_insert_post(
+			array(
+				'post_type'   => 'kha_lead',
+				'post_title'  => $lead_data['name'] . ' - ' . $lead_data['phone'],
+				'post_status' => 'publish',
+			)
+		);
+
+		if ( is_wp_error( $lead_id ) ) {
+			return $lead_id;
+		}
+
+		// Save lead meta.
+		update_post_meta( $lead_id, '_lead_name', sanitize_text_field( $lead_data['name'] ) );
+		update_post_meta( $lead_id, '_lead_email', sanitize_email( $lead_data['email'] ) );
+		update_post_meta( $lead_id, '_lead_phone', sanitize_text_field( $lead_data['phone'] ) );
+		update_post_meta( $lead_id, '_lead_source', 'calculator' );
+		update_post_meta( $lead_id, '_calculation_data', $lead_data['calculation_data'] );
+		update_post_meta( $lead_id, '_lead_date', current_time( 'mysql' ) );
+
+		return $lead_id;
 	}
 
 	/**
 	 * Calculator shortcode.
 	 *
-	 * @return string
-	 * @since 1.0.0
+	 * @return string Calculator HTML.
 	 */
 	public function calculator_shortcode() {
 		ob_start();
-		kha_solar_get_template( 'calculator.php' );
+		include KHA_PLUGIN_DIR . 'templates/calculator.php';
 		return ob_get_clean();
 	}
 }

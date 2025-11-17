@@ -339,6 +339,16 @@ function kha_solar_enqueue_public_assets() {
 			'nonce'   => wp_create_nonce( 'kha_solar_nonce' ),
 		)
 	);
+
+	// Localize calculator.
+	wp_localize_script(
+		'kha-solar-calculator',
+		'khaCalculatorConfig',
+		array(
+			'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+			'nonce'   => wp_create_nonce( 'kha_solar_nonce' ),
+		)
+	);
 }
 add_action( 'wp_enqueue_scripts', 'kha_solar_enqueue_public_assets' );
 

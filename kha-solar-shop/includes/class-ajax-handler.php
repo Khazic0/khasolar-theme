@@ -54,6 +54,12 @@ class Ajax_Handler {
 		// Calculator actions.
 		add_action( 'wp_ajax_kha_calculate_solar', array( $this, 'calculate_solar' ) );
 		add_action( 'wp_ajax_nopriv_kha_calculate_solar', array( $this, 'calculate_solar' ) );
+		add_action( 'wp_ajax_kha_calculate_solar_system', array( $this, 'calculate_solar_system' ) );
+		add_action( 'wp_ajax_nopriv_kha_calculate_solar_system', array( $this, 'calculate_solar_system' ) );
+		add_action( 'wp_ajax_kha_get_product_recommendations', array( $this, 'get_product_recommendations' ) );
+		add_action( 'wp_ajax_nopriv_kha_get_product_recommendations', array( $this, 'get_product_recommendations' ) );
+		add_action( 'wp_ajax_kha_save_calculator_lead', array( $this, 'save_calculator_lead' ) );
+		add_action( 'wp_ajax_nopriv_kha_save_calculator_lead', array( $this, 'save_calculator_lead' ) );
 
 		// Product view tracking.
 		add_action( 'wp_ajax_kha_track_view', array( $this, 'track_product_view' ) );
@@ -1098,6 +1104,111 @@ class Ajax_Handler {
 				'cart_count'           => $cart_count,
 				'empty_cart_html'      => $empty_cart_html,
 				'shipping_notice_html' => $shipping_notice_html,
+			)
+		);
+	}
+
+	/**
+	 * Calculate solar system requirements.
+	 *
+	 * @since 1.0.0
+	 */
+	public function calculate_solar_system() {
+		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
+
+		$monthly_bill = isset( $_POST['monthly_bill'] ) ? absint( $_POST['monthly_bill'] ) : 0;
+		$roof_area    = isset( $_POST['roof_area'] ) ? absint( $_POST['roof_area'] ) : 0;
+		$with_battery = isset( $_POST['with_battery'] ) && $_POST['with_battery'] === 'true';
+
+		if ( ! $monthly_bill || ! $roof_area ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Vui lòng nhập đầy đủ thông tin.', 'kha-solar' ) )
+			);
+		}
+
+		// Calculate system size
+		$calculator = new Calculator();
+		$results    = $calculator->calculate_system_size( $monthly_bill, $roof_area, $with_battery );
+
+		wp_send_json_success( $results );
+	}
+
+	/**
+	 * Get product recommendations based on system size.
+	 *
+	 * @since 1.0.0
+	 */
+	public function get_product_recommendations() {
+		check_ajax_referer( 'kha_solar_nonce', 'nonce' );
+
+		$system_kw    = isset( $_POST['system_kw'] ) ? floatval( $_POST['system_kw'] ) : 0;
+		$with_battery = isset( $_POST['with_battery'] ) && $_POST['with_battery'] === 'true';
+
+		if ( ! $system_kw ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Thông số hệ thống không hợp lệ.', 'kha-solar' ) )
+			);
+		}
+
+		$calculator = new Calculator();
+		$products   = $calculator->get_product_recommendations( $system_kw, $with_battery );
+
+		// Calculate bundle pricing
+		$bundle = $calculator->calculate_bundle_price( $products );
+
+		wp_send_json_success(
+			array(
+				'products' => $products,
+				'bundle'   => $bundle,
+			)
+		);
+	}
+
+	/**
+	 * Save calculator lead.
+	 *
+	 * @since 1.0.0
+	 */
+	public function save_calculator_lead() {
+		check_ajax_referer( 'kha_calculator_nonce', 'calculator_nonce' );
+
+		$lead_name  = isset( $_POST['lead_name'] ) ? sanitize_text_field( $_POST['lead_name'] ) : '';
+		$lead_phone = isset( $_POST['lead_phone'] ) ? sanitize_text_field( $_POST['lead_phone'] ) : '';
+		$lead_email = isset( $_POST['lead_email'] ) ? sanitize_email( $_POST['lead_email'] ) : '';
+
+		// Validate required fields
+		if ( empty( $lead_name ) || empty( $lead_phone ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'Vui lòng nhập đầy đủ họ tên và số điện thoại.', 'kha-solar' ) )
+			);
+		}
+
+		// Prepare lead data
+		$lead_data = array(
+			'name'             => $lead_name,
+			'phone'            => $lead_phone,
+			'email'            => $lead_email,
+			'calculation_data' => array(
+				'monthly_bill' => isset( $_POST['calc_monthly_bill'] ) ? absint( $_POST['calc_monthly_bill'] ) : 0,
+				'roof_area'    => isset( $_POST['calc_roof_area'] ) ? absint( $_POST['calc_roof_area'] ) : 0,
+				'with_battery' => isset( $_POST['calc_with_battery'] ) ? sanitize_text_field( $_POST['calc_with_battery'] ) : 'no',
+				'system_kw'    => isset( $_POST['calc_system_kw'] ) ? floatval( $_POST['calc_system_kw'] ) : 0,
+			),
+		);
+
+		$calculator = new Calculator();
+		$lead_id    = $calculator->save_lead( $lead_data );
+
+		if ( is_wp_error( $lead_id ) ) {
+			wp_send_json_error(
+				array( 'message' => $lead_id->get_error_message() )
+			);
+		}
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'Yêu cầu tư vấn đã được gửi thành công! Chúng tôi sẽ liên hệ với bạn sớm.', 'kha-solar' ),
+				'lead_id' => $lead_id,
 			)
 		);
 	}
