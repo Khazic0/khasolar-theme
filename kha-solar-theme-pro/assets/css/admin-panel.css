@@ -1,0 +1,181 @@
+/**
+ * Admin Panel Styles
+ *
+ * @package KhaSolarThemePro
+ * @since 1.0.0
+ */
+
+.khasolar-pro-admin-wrap {
+	margin: 20px 20px 0 0;
+}
+
+.khasolar-pro-admin-container {
+	background: #fff;
+	border: 1px solid #ccd0d4;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+	margin: 20px 0;
+}
+
+.khasolar-pro-tabs {
+	display: flex;
+	min-height: 600px;
+}
+
+.khasolar-pro-tabs-nav {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	width: 200px;
+	background: #f3f4f5;
+	border-right: 1px solid #ccd0d4;
+}
+
+.khasolar-pro-tabs-nav li {
+	margin: 0;
+	padding: 0;
+	border-bottom: 1px solid #ccd0d4;
+}
+
+.khasolar-pro-tabs-nav a {
+	display: block;
+	padding: 15px 20px;
+	text-decoration: none;
+	color: #2c3338;
+	font-size: 14px;
+	transition: all 0.2s;
+}
+
+.khasolar-pro-tabs-nav a:hover {
+	background: #e8e9eb;
+	color: #0073aa;
+}
+
+.khasolar-pro-tabs-nav a.active {
+	background: #fff;
+	color: #0073aa;
+	font-weight: 600;
+	border-left: 3px solid #0073aa;
+	padding-left: 17px;
+}
+
+.khasolar-pro-tabs-content {
+	flex: 1;
+	padding: 30px;
+}
+
+.khasolar-pro-tab-panel {
+	display: none;
+}
+
+.khasolar-pro-tab-panel.active {
+	display: block;
+}
+
+.khasolar-pro-tab-panel h2 {
+	margin-top: 0;
+	margin-bottom: 20px;
+	font-size: 23px;
+	font-weight: 400;
+	line-height: 1.3;
+}
+
+/* Header Layout Previews */
+.header-layout-preview {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 15px;
+	margin-top: 15px;
+}
+
+.header-preview {
+	max-width: 100%;
+	height: auto;
+	border: 2px solid #ddd;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.3s;
+}
+
+.header-preview:hover {
+	border-color: #0073aa;
+	box-shadow: 0 2px 8px rgba(0, 115, 170, 0.2);
+}
+
+/* Color Presets */
+.color-preset {
+	margin-right: 10px;
+	margin-bottom: 10px;
+}
+
+/* Homepage Sections */
+.homepage-sections {
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 10px;
+	background: #f9f9f9;
+}
+
+.section-item {
+	display: flex;
+	align-items: center;
+	padding: 10px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	margin-bottom: 5px;
+	cursor: move;
+}
+
+.section-item .dashicons {
+	margin-right: 10px;
+	color: #999;
+	cursor: grab;
+}
+
+.section-item:active .dashicons {
+	cursor: grabbing;
+}
+
+.section-item label {
+	margin: 0;
+	cursor: pointer;
+	user-select: none;
+}
+
+.section-item input[type="checkbox"] {
+	margin-right: 8px;
+}
+
+.section-item-placeholder {
+	border: 2px dashed #0073aa;
+	background: #e6f3ff;
+	height: 40px;
+	margin-bottom: 5px;
+	border-radius: 3px;
+}
+
+/* System Info Table */
+.widefat.striped tbody tr:nth-child(2n+1) td {
+	background-color: #f9f9f9;
+}
+
+/* Responsive */
+@media screen and (max-width: 782px) {
+	.khasolar-pro-tabs {
+		flex-direction: column;
+	}
+
+	.khasolar-pro-tabs-nav {
+		width: 100%;
+		border-right: none;
+		border-bottom: 1px solid #ccd0d4;
+	}
+
+	.khasolar-pro-tabs-content {
+		padding: 20px;
+	}
+
+	.header-layout-preview {
+		grid-template-columns: 1fr;
+	}
+}

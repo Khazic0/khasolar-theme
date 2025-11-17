@@ -1,0 +1,288 @@
+/*
+Theme Name: Kha Solar Theme Pro
+Theme URI: https://khasolar.vn
+Author: Kha Solar Team
+Author URI: https://khasolar.vn
+Description: Theme WordPress cao cấp chuyên dụng cho website bán thiết bị năng lượng mặt trời. Tích hợp admin panel mạnh mẽ, homepage builder, nhiều layout header/footer, và tối ưu hiệu suất.
+Version: 1.0.0
+Requires at least: 5.8
+Tested up to: 6.4
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: kha-solar-theme-pro
+Tags: e-commerce, solar, energy, business, custom-colors, custom-header, custom-logo, custom-menu, featured-images, flexible-header, footer-widgets, full-width-template, rtl-language-support, theme-options, threaded-comments, translation-ready, two-columns, right-sidebar
+
+Kha Solar Theme Pro, Copyright 2024 Kha Solar Team
+Kha Solar Theme Pro is distributed under the terms of the GNU GPL
+*/
+
+/* ==========================================================================
+   Main Styles - Compiled from SCSS
+   ========================================================================== */
+
+/* NOTE: Main styles are compiled from assets/scss/main.scss */
+/* This file contains only theme headers for WordPress recognition */
+
+/* Basic Reset */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 16px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	font-size: 1rem;
+	line-height: 1.6;
+	color: #333333;
+	background-color: #ffffff;
+}
+
+/* WordPress Core Alignment */
+.alignnone {
+	margin: 5px 20px 20px 0;
+}
+
+.aligncenter,
+div.aligncenter {
+	display: block;
+	margin: 5px auto 20px auto;
+}
+
+.alignright {
+	float: right;
+	margin: 5px 0 20px 20px;
+}
+
+.alignleft {
+	float: left;
+	margin: 5px 20px 20px 0;
+}
+
+a img.alignright {
+	float: right;
+	margin: 5px 0 20px 20px;
+}
+
+a img.alignnone {
+	margin: 5px 20px 20px 0;
+}
+
+a img.alignleft {
+	float: left;
+	margin: 5px 20px 20px 0;
+}
+
+a img.aligncenter {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.wp-caption {
+	background: #fff;
+	border: 1px solid #f0f0f0;
+	max-width: 96%;
+	padding: 5px 3px 10px;
+	text-align: center;
+}
+
+.wp-caption.alignnone {
+	margin: 5px 20px 20px 0;
+}
+
+.wp-caption.alignleft {
+	margin: 5px 20px 20px 0;
+}
+
+.wp-caption.alignright {
+	margin: 5px 0 20px 20px;
+}
+
+.wp-caption img {
+	border: 0 none;
+	height: auto;
+	margin: 0;
+	max-width: 98.5%;
+	padding: 0;
+	width: auto;
+}
+
+.wp-caption p.wp-caption-text {
+	font-size: 0.875rem;
+	line-height: 1.5;
+	margin: 0;
+	padding: 0 4px 5px;
+}
+
+/* Screen Reader Text */
+.screen-reader-text {
+	border: 0;
+	clip: rect(1px, 1px, 1px, 1px);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute !important;
+	width: 1px;
+	word-wrap: normal !important;
+}
+
+.screen-reader-text:focus {
+	background-color: #f1f1f1;
+	border-radius: 3px;
+	box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+	clip: auto !important;
+	clip-path: none;
+	color: #21759b;
+	display: block;
+	font-size: 0.875rem;
+	font-weight: 700;
+	height: auto;
+	left: 5px;
+	line-height: normal;
+	padding: 15px 23px 14px;
+	text-decoration: none;
+	top: 5px;
+	width: auto;
+	z-index: 100000;
+}
+
+/* Container */
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 15px;
+}
+
+.container-fluid {
+	width: 100%;
+	padding: 0 15px;
+}
+
+/* Grid System */
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 -15px;
+}
+
+.col {
+	flex: 1;
+	padding: 0 15px;
+}
+
+/* Utility Classes */
+.text-center {
+	text-align: center;
+}
+
+.text-left {
+	text-align: left;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.d-none {
+	display: none;
+}
+
+.d-block {
+	display: block;
+}
+
+.d-flex {
+	display: flex;
+}
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+.mb-5 { margin-bottom: 3rem; }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mt-5 { margin-top: 3rem; }
+
+/* Buttons */
+.btn {
+	display: inline-block;
+	padding: 12px 30px;
+	font-size: 1rem;
+	font-weight: 600;
+	text-align: center;
+	text-decoration: none;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.btn-primary {
+	background-color: #0066cc;
+	color: #ffffff;
+}
+
+.btn-primary:hover {
+	background-color: #0052a3;
+	color: #ffffff;
+}
+
+.btn-secondary {
+	background-color: #6c757d;
+	color: #ffffff;
+}
+
+.btn-secondary:hover {
+	background-color: #545b62;
+	color: #ffffff;
+}
+
+/* Links */
+a {
+	color: #0066cc;
+	text-decoration: none;
+	transition: color 0.3s ease;
+}
+
+a:hover {
+	color: #0052a3;
+	text-decoration: underline;
+}
+
+/* Images */
+img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+	.container {
+		padding: 0 20px;
+	}
+
+	.row {
+		margin: 0 -10px;
+	}
+
+	.col {
+		padding: 0 10px;
+	}
+}
