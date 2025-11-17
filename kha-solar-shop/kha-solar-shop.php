@@ -166,6 +166,12 @@ function kha_solar_init() {
 		$comparison->init();
 	}
 
+	// Initialize shortcodes.
+	if ( class_exists( 'KhaSolar\Shortcodes' ) ) {
+		$shortcodes = new KhaSolar\Shortcodes();
+		$shortcodes->init();
+	}
+
 	// Initialize admin functionality.
 	if ( is_admin() ) {
 		if ( class_exists( 'KhaSolar\Product_Meta_Boxes' ) ) {
@@ -176,6 +182,11 @@ function kha_solar_init() {
 		if ( class_exists( 'KhaSolar\Order_Management' ) ) {
 			$order_management = new KhaSolar\Order_Management();
 			$order_management->init();
+		}
+
+		if ( class_exists( 'KhaSolar\Sample_Data' ) ) {
+			$sample_data = new KhaSolar\Sample_Data();
+			$sample_data->init();
 		}
 	}
 

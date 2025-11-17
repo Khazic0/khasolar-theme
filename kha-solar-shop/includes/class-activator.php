@@ -190,29 +190,29 @@ class Activator {
 	 */
 	private static function create_pages() {
 		$pages = array(
-			'shop'       => array(
-				'title'   => __( 'Shop', 'kha-solar' ),
-				'content' => '[kha_solar_products]',
+			'san-pham'       => array(
+				'title'   => __( 'Sản Phẩm', 'kha-solar' ),
+				'content' => '[kha_products]',
 				'option'  => 'kha_solar_shop_page_id',
 			),
-			'cart'       => array(
-				'title'   => __( 'Cart', 'kha-solar' ),
-				'content' => '[kha_solar_cart]',
+			'gio-hang'       => array(
+				'title'   => __( 'Giỏ Hàng', 'kha-solar' ),
+				'content' => '[kha_cart]',
 				'option'  => 'kha_solar_cart_page_id',
 			),
-			'checkout'   => array(
-				'title'   => __( 'Checkout', 'kha-solar' ),
-				'content' => '[kha_solar_checkout]',
+			'thanh-toan'     => array(
+				'title'   => __( 'Thanh Toán', 'kha-solar' ),
+				'content' => '[kha_checkout]',
 				'option'  => 'kha_solar_checkout_page_id',
 			),
-			'calculator' => array(
-				'title'   => __( 'Solar Calculator', 'kha-solar' ),
-				'content' => '[kha_solar_calculator]',
+			'tinh-toan-solar' => array(
+				'title'   => __( 'Tính Toán Hệ Thống Solar', 'kha-solar' ),
+				'content' => '[kha_calculator]',
 				'option'  => 'kha_solar_calculator_page_id',
 			),
-			'comparison' => array(
-				'title'   => __( 'Product Comparison', 'kha-solar' ),
-				'content' => '[kha_solar_comparison]',
+			'so-sanh'        => array(
+				'title'   => __( 'So Sánh Sản Phẩm', 'kha-solar' ),
+				'content' => '[kha_comparison]',
 				'option'  => 'kha_solar_comparison_page_id',
 			),
 		);
