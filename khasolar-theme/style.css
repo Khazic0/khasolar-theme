@@ -1,0 +1,513 @@
+/*
+Theme Name: Kha Solar Theme
+Theme URI: https://khasolar.com
+Author: Kha Solar Team
+Author URI: https://khasolar.com
+Description: Theme chuyên dụng cho website bán thiết bị năng lượng mặt trời. Được thiết kế để hoạt động hoàn hảo với plugin Kha Solar Shop.
+Version: 1.0.0
+Requires at least: 5.8
+Tested up to: 6.4
+Requires PHP: 7.4
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: khasolar-theme
+Tags: e-commerce, solar, clean, modern, responsive, vietnamese
+*/
+
+/*--------------------------------------------------------------
+>>> TABLE OF CONTENTS:
+----------------------------------------------------------------
+1.0 Reset & Normalize
+2.0 Typography
+3.0 Layout
+4.0 Header
+5.0 Navigation
+6.0 Content
+7.0 Sidebar
+8.0 Footer
+9.0 Responsive
+--------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+1.0 Reset & Normalize
+--------------------------------------------------------------*/
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 16px;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	font-size: 1rem;
+	line-height: 1.6;
+	color: #333;
+	background-color: #fff;
+	overflow-x: hidden;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+}
+
+a {
+	color: #0066cc;
+	text-decoration: none;
+	transition: color 0.3s ease;
+}
+
+a:hover {
+	color: #004499;
+}
+
+ul, ol {
+	list-style-position: inside;
+}
+
+/*--------------------------------------------------------------
+2.0 Typography
+--------------------------------------------------------------*/
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 700;
+	line-height: 1.3;
+	margin-bottom: 1rem;
+	color: #222;
+}
+
+h1 {
+	font-size: 2.5rem;
+}
+
+h2 {
+	font-size: 2rem;
+}
+
+h3 {
+	font-size: 1.75rem;
+}
+
+h4 {
+	font-size: 1.5rem;
+}
+
+h5 {
+	font-size: 1.25rem;
+}
+
+h6 {
+	font-size: 1rem;
+}
+
+p {
+	margin-bottom: 1.5rem;
+}
+
+/*--------------------------------------------------------------
+3.0 Layout
+--------------------------------------------------------------*/
+
+.site {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+
+.site-content {
+	flex: 1;
+	padding: 2rem 0;
+}
+
+.container {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+.container-wide {
+	max-width: 1400px;
+	margin: 0 auto;
+	padding: 0 20px;
+}
+
+.row {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 -15px;
+}
+
+.col {
+	padding: 0 15px;
+}
+
+/*--------------------------------------------------------------
+4.0 Header
+--------------------------------------------------------------*/
+
+.site-header {
+	background-color: #fff;
+	border-bottom: 1px solid #e5e5e5;
+	padding: 1rem 0;
+	position: sticky;
+	top: 0;
+	z-index: 1000;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.site-branding {
+	display: flex;
+	align-items: center;
+}
+
+.site-title {
+	font-size: 1.8rem;
+	font-weight: 700;
+	margin: 0;
+}
+
+.site-title a {
+	color: #0066cc;
+}
+
+.site-description {
+	font-size: 0.9rem;
+	color: #666;
+	margin: 0.5rem 0 0;
+}
+
+.header-content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+/*--------------------------------------------------------------
+5.0 Navigation
+--------------------------------------------------------------*/
+
+.main-navigation {
+	display: flex;
+	align-items: center;
+	gap: 2rem;
+}
+
+.main-navigation ul {
+	display: flex;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	gap: 1.5rem;
+}
+
+.main-navigation li {
+	position: relative;
+}
+
+.main-navigation a {
+	color: #333;
+	font-weight: 500;
+	padding: 0.5rem 1rem;
+	display: block;
+	transition: all 0.3s ease;
+}
+
+.main-navigation a:hover {
+	color: #0066cc;
+}
+
+.menu-toggle {
+	display: none;
+	background: none;
+	border: none;
+	font-size: 1.5rem;
+	cursor: pointer;
+	padding: 0.5rem;
+}
+
+/*--------------------------------------------------------------
+6.0 Content
+--------------------------------------------------------------*/
+
+.site-main {
+	margin-bottom: 2rem;
+}
+
+.entry-header {
+	margin-bottom: 2rem;
+}
+
+.entry-title {
+	margin-bottom: 0.5rem;
+}
+
+.entry-meta {
+	font-size: 0.9rem;
+	color: #666;
+	margin-bottom: 1rem;
+}
+
+.entry-content {
+	margin-bottom: 2rem;
+}
+
+.entry-content img {
+	margin: 1.5rem 0;
+	border-radius: 8px;
+}
+
+.entry-footer {
+	border-top: 1px solid #e5e5e5;
+	padding-top: 1rem;
+	font-size: 0.9rem;
+	color: #666;
+}
+
+/* Pagination */
+.pagination {
+	display: flex;
+	justify-content: center;
+	gap: 0.5rem;
+	margin: 2rem 0;
+}
+
+.pagination a,
+.pagination span {
+	padding: 0.5rem 1rem;
+	border: 1px solid #e5e5e5;
+	border-radius: 4px;
+	display: inline-block;
+}
+
+.pagination .current {
+	background-color: #0066cc;
+	color: #fff;
+	border-color: #0066cc;
+}
+
+/*--------------------------------------------------------------
+7.0 Sidebar
+--------------------------------------------------------------*/
+
+.sidebar {
+	background-color: #f9f9f9;
+	padding: 1.5rem;
+	border-radius: 8px;
+}
+
+.widget {
+	margin-bottom: 2rem;
+}
+
+.widget:last-child {
+	margin-bottom: 0;
+}
+
+.widget-title {
+	font-size: 1.25rem;
+	margin-bottom: 1rem;
+	padding-bottom: 0.5rem;
+	border-bottom: 2px solid #0066cc;
+}
+
+.widget ul {
+	list-style: none;
+	padding: 0;
+}
+
+.widget li {
+	padding: 0.5rem 0;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.widget li:last-child {
+	border-bottom: none;
+}
+
+/*--------------------------------------------------------------
+8.0 Footer
+--------------------------------------------------------------*/
+
+.site-footer {
+	background-color: #222;
+	color: #fff;
+	padding: 2rem 0 1rem;
+	margin-top: auto;
+}
+
+.footer-widgets {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+	gap: 2rem;
+	margin-bottom: 2rem;
+}
+
+.footer-widget {
+	color: #ccc;
+}
+
+.footer-widget h3 {
+	color: #fff;
+	font-size: 1.25rem;
+	margin-bottom: 1rem;
+}
+
+.footer-widget ul {
+	list-style: none;
+	padding: 0;
+}
+
+.footer-widget li {
+	margin-bottom: 0.5rem;
+}
+
+.footer-widget a {
+	color: #ccc;
+}
+
+.footer-widget a:hover {
+	color: #fff;
+}
+
+.site-info {
+	text-align: center;
+	padding-top: 1.5rem;
+	border-top: 1px solid #444;
+	font-size: 0.9rem;
+	color: #999;
+}
+
+.site-info a {
+	color: #ccc;
+}
+
+/*--------------------------------------------------------------
+9.0 Responsive
+--------------------------------------------------------------*/
+
+@media (max-width: 768px) {
+	.menu-toggle {
+		display: block;
+	}
+
+	.main-navigation {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+
+	.main-navigation ul {
+		flex-direction: column;
+		width: 100%;
+		gap: 0;
+	}
+
+	.main-navigation ul {
+		display: none;
+	}
+
+	.main-navigation.toggled ul {
+		display: flex;
+	}
+
+	.header-content {
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	h1 {
+		font-size: 2rem;
+	}
+
+	h2 {
+		font-size: 1.75rem;
+	}
+
+	h3 {
+		font-size: 1.5rem;
+	}
+
+	.footer-widgets {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 480px) {
+	.container {
+		padding: 0 15px;
+	}
+
+	h1 {
+		font-size: 1.75rem;
+	}
+
+	h2 {
+		font-size: 1.5rem;
+	}
+}
+
+/*--------------------------------------------------------------
+10.0 Utilities
+--------------------------------------------------------------*/
+
+.text-center {
+	text-align: center;
+}
+
+.text-right {
+	text-align: right;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.btn {
+	display: inline-block;
+	padding: 0.75rem 1.5rem;
+	background-color: #0066cc;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-size: 1rem;
+	font-weight: 500;
+	text-align: center;
+	transition: all 0.3s ease;
+}
+
+.btn:hover {
+	background-color: #004499;
+	color: #fff;
+	transform: translateY(-2px);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+	background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+	background-color: #545b62;
+}
+
+.btn-success {
+	background-color: #28a745;
+}
+
+.btn-success:hover {
+	background-color: #218838;
+}

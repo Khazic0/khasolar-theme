@@ -1,0 +1,376 @@
+/**
+ * Custom Styles
+ *
+ * Additional styles for Kha Solar Theme.
+ *
+ * @package KhaSolarTheme
+ */
+
+/*--------------------------------------------------------------
+>>> TABLE OF CONTENTS:
+----------------------------------------------------------------
+1.0 Back to Top Button
+2.0 Breadcrumbs
+3.0 Post Navigation
+4.0 Comments
+5.0 Widgets
+6.0 Animations
+--------------------------------------------------------------*/
+
+/*--------------------------------------------------------------
+1.0 Back to Top Button
+--------------------------------------------------------------*/
+
+.back-to-top {
+	position: fixed;
+	bottom: 30px;
+	right: 30px;
+	width: 50px;
+	height: 50px;
+	background-color: #0066cc;
+	color: #fff;
+	text-align: center;
+	line-height: 50px;
+	border-radius: 50%;
+	display: none;
+	z-index: 999;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.back-to-top:hover {
+	background-color: #004499;
+	transform: translateY(-5px);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.back-to-top .dashicons {
+	font-size: 20px;
+	width: 50px;
+	height: 50px;
+	line-height: 50px;
+}
+
+/*--------------------------------------------------------------
+2.0 Breadcrumbs
+--------------------------------------------------------------*/
+
+.breadcrumbs {
+	padding: 1rem 0;
+	margin-bottom: 2rem;
+	font-size: 0.9rem;
+}
+
+.breadcrumbs ul {
+	display: flex;
+	flex-wrap: wrap;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	gap: 0.5rem;
+}
+
+.breadcrumbs li {
+	display: flex;
+	align-items: center;
+}
+
+.breadcrumbs li::after {
+	content: '›';
+	margin-left: 0.5rem;
+	color: #999;
+}
+
+.breadcrumbs li:last-child::after {
+	content: '';
+}
+
+.breadcrumbs a {
+	color: #666;
+}
+
+.breadcrumbs a:hover {
+	color: #0066cc;
+}
+
+/*--------------------------------------------------------------
+3.0 Post Navigation
+--------------------------------------------------------------*/
+
+.post-navigation,
+.posts-navigation {
+	margin: 3rem 0;
+	border-top: 1px solid #e5e5e5;
+	padding-top: 2rem;
+}
+
+.post-navigation .nav-links {
+	display: flex;
+	justify-content: space-between;
+	gap: 2rem;
+}
+
+.post-navigation .nav-previous,
+.post-navigation .nav-next {
+	flex: 1;
+}
+
+.post-navigation .nav-next {
+	text-align: right;
+}
+
+.post-navigation .nav-subtitle {
+	display: block;
+	font-size: 0.9rem;
+	color: #666;
+	margin-bottom: 0.5rem;
+}
+
+.post-navigation .nav-title {
+	font-weight: 600;
+	color: #0066cc;
+}
+
+/*--------------------------------------------------------------
+4.0 Comments
+--------------------------------------------------------------*/
+
+.comments-area {
+	margin-top: 3rem;
+	padding-top: 2rem;
+	border-top: 1px solid #e5e5e5;
+}
+
+.comments-title,
+.comment-reply-title {
+	margin-bottom: 1.5rem;
+	font-size: 1.5rem;
+}
+
+.comment-list {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.comment {
+	margin-bottom: 1.5rem;
+	padding: 1.5rem;
+	background-color: #f9f9f9;
+	border-radius: 8px;
+}
+
+.comment-author img {
+	border-radius: 50%;
+	float: left;
+	margin-right: 1rem;
+}
+
+.comment-metadata {
+	font-size: 0.9rem;
+	color: #666;
+	margin-bottom: 1rem;
+}
+
+.comment-metadata a {
+	color: #666;
+}
+
+.comment-body {
+	clear: both;
+}
+
+.reply {
+	margin-top: 1rem;
+}
+
+.reply a {
+	font-size: 0.9rem;
+	color: #0066cc;
+}
+
+.children {
+	list-style: none;
+	margin-left: 2rem;
+	padding-left: 0;
+}
+
+.comment-form {
+	margin-top: 2rem;
+}
+
+.comment-form input[type="text"],
+.comment-form input[type="email"],
+.comment-form input[type="url"],
+.comment-form textarea {
+	width: 100%;
+	padding: 0.75rem;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	margin-bottom: 1rem;
+}
+
+.comment-form textarea {
+	min-height: 150px;
+}
+
+.comment-form input[type="submit"] {
+	background-color: #0066cc;
+	color: #fff;
+	padding: 0.75rem 1.5rem;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.comment-form input[type="submit"]:hover {
+	background-color: #004499;
+}
+
+/*--------------------------------------------------------------
+5.0 Widgets
+--------------------------------------------------------------*/
+
+.widget {
+	background-color: #fff;
+	padding: 1.5rem;
+	border: 1px solid #e5e5e5;
+	border-radius: 8px;
+	margin-bottom: 2rem;
+}
+
+.widget ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.widget li {
+	padding: 0.75rem 0;
+	border-bottom: 1px solid #e5e5e5;
+}
+
+.widget li:last-child {
+	border-bottom: none;
+}
+
+.widget li a {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.widget li a:hover {
+	color: #0066cc;
+}
+
+.widget select {
+	width: 100%;
+	padding: 0.5rem;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+/* Search widget */
+.widget_search form {
+	display: flex;
+	gap: 0.5rem;
+}
+
+.widget_search input[type="search"] {
+	flex: 1;
+	padding: 0.5rem;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+
+.widget_search button {
+	padding: 0.5rem 1rem;
+	background-color: #0066cc;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
+.widget_search button:hover {
+	background-color: #004499;
+}
+
+/*--------------------------------------------------------------
+6.0 Animations
+--------------------------------------------------------------*/
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.entry-content img,
+.post-thumbnail img {
+	animation: fadeIn 0.6s ease;
+}
+
+/* Smooth transitions */
+a,
+button,
+.btn {
+	transition: all 0.3s ease;
+}
+
+/* Loading animation */
+.loading {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	border: 3px solid rgba(0, 102, 204, 0.3);
+	border-radius: 50%;
+	border-top-color: #0066cc;
+	animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/*--------------------------------------------------------------
+7.0 Responsive Helpers
+--------------------------------------------------------------*/
+
+@media (max-width: 768px) {
+	.back-to-top {
+		bottom: 20px;
+		right: 20px;
+		width: 40px;
+		height: 40px;
+		line-height: 40px;
+	}
+
+	.back-to-top .dashicons {
+		width: 40px;
+		height: 40px;
+		line-height: 40px;
+		font-size: 18px;
+	}
+
+	.post-navigation .nav-links {
+		flex-direction: column;
+	}
+
+	.post-navigation .nav-next {
+		text-align: left;
+	}
+
+	.children {
+		margin-left: 1rem;
+	}
+}
